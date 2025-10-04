@@ -24,7 +24,6 @@ const emit = defineEmits<{
   'assignRoles': []
 }>()
 
-// 提供更清晰的方法名
 const handleVisibleUpdate = (value: boolean) => {
   emit('update:modelValue', value)
 }

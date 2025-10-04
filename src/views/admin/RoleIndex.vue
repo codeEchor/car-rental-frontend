@@ -1,7 +1,7 @@
 <template>
   <div class="roleContainer">
     <!--    表单-->
-    <el-form :inline="true" :model="formData" class="roleQueryForm">
+    <el-form :inline="true"  @submit.prevent :model="formData" class="roleQueryForm">
       <el-form-item label="角色名称：">
         <el-input v-model="formData.roleName" placeholder="请输入名称" />
       </el-form-item>

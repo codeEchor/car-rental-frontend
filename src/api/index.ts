@@ -4,11 +4,23 @@
 // API 唯一标识：
 import * as userController from "./userController";
 import * as roleController from "./roleController";
+import * as newsController from "./newsController";
 import * as menusController from "./menusController";
+import * as favoritesController from "./favoritesController";
+import * as cityController from "./cityController";
+import * as categoryController from "./categoryController";
+import * as carController from "./carController";
+import * as brandController from "./brandController";
 import * as fileUploadController from "./fileUploadController";
 export default {
   userController,
   roleController,
+  newsController,
   menusController,
+  favoritesController,
+  cityController,
+  categoryController,
+  carController,
+  brandController,
   fileUploadController,
 };

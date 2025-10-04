@@ -5,6 +5,13 @@ import MenuIndex from '@/views/admin/MenuIndex.vue'
 import Home from '@/views/admin/Home.vue'
 import UserLogin from "@/views/login/UserLogin.vue";
 import UserRegister from "@/views/login/UserRegister.vue";
+import CityIndex from "@/views/admin/CityIndex.vue";
+import CarIndex from "@/views/admin/CarIndex.vue";
+import OrderIndex from "@/views/admin/OrderIndex.vue";
+import NewIndex from "@/views/admin/NewIndex.vue";
+import FavoritesIndex from "@/views/admin/FavoritesIndex.vue";
+import BrandIndex from "@/views/admin/BrandIndex.vue";
+import CategoryIndex from "@/views/admin/CategoryIndex.vue";
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -38,6 +45,89 @@ const router = createRouter({
                     path: '/index/home',
                     name: 'home',
                     component: Home,
+                },
+            ]
+        },
+        {
+            path: '/index/corebusiness',
+            name: 'corebusiness',
+            redirect: '/index/city',
+            meta: {
+                title: '核心业务处理',
+                icon: 'Grid',
+            },
+            children: [
+                {
+                    path: '/index/car',
+                    name: 'car',
+                    component: CarIndex,
+                    meta: {
+                        title: '汽车管理',
+                        icon: 'Van',
+                    },
+                },
+                {
+                    path: '/index/order',
+                    name: 'order',
+                    component: OrderIndex,
+                    meta: {
+                        title: '订单管理',
+                        icon: 'GoodsFilled',
+                    },
+                },
+                {
+                    path: '/index/new',
+                    name: 'new',
+                    component: NewIndex,
+                    meta: {
+                        title: '新闻管理',
+                        icon: 'Handbag',
+                    },
+                },
+                {
+                    path: '/index/favorites',
+                    name: 'favorites',
+                    component: FavoritesIndex,
+                    meta: {
+                        title: '收藏管理',
+                        icon: 'List',
+                    },
+                },
+                {
+                    path: '/index/brand',
+                    name: 'brand',
+                    component: BrandIndex,
+                    meta: {
+                        title: '品牌管理',
+                        icon: 'Wallet',
+                    },
+                },
+                {
+                    path: '/index/category',
+                    name: 'category',
+                    component: CategoryIndex,
+                    meta: {
+                        title: '类型管理',
+                        icon: 'TakeawayBox',
+                    },
+                },
+                {
+                    path: '/index/city',
+                    name: 'city',
+                    component: CityIndex,
+                    meta: {
+                        title: '城市管理',
+                        icon: 'location',
+                    },
+                },
+                {
+                    path: '/index/city',
+                    name: 'city',
+                    component: CityIndex,
+                    meta: {
+                        title: '城市管理',
+                        icon: 'location',
+                    },
                 },
             ]
         },

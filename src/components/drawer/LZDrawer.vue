@@ -4,6 +4,7 @@ import type {UserAddDto, UserUpdateDto} from "@/entity/dto/userDto";
 import {ElMessage, type UploadRequestOptions} from "element-plus";
 import request from "@/axios/request.ts";
 import {reactive, ref, type Ref, watch} from "vue";
+import useFileUpload from "@/hooks/useFileUpload.ts";
 const addOrUpdateFormRef=ref();
 const uploadRef=ref();
 interface Props{
@@ -62,24 +63,11 @@ const addOrUpdateRules = reactive({
 watch(()=>props.formData,(newValue)=>{
   console.log(newValue);
 },{deep:true})
-// 文件上传
-const handleHttpUpload = async (options: UploadRequestOptions) => {
-  console.log('文件正在上传中。。。',options);
-  let formData = new FormData();
-  formData.append("file", options.file);
-  try {
-    const res=await request.post('/file/upload',formData,{headers:{
-        'Content-Type': 'multipart/form-data'
-      }});
-    if(res.data.code==2000)
-    {
-      props.formData.avatar=res.data.data;
-      ElMessage.success('头像上传成功');
-    }
-  } catch (error) {
-    options.onError(error as any);
-  }
-};
+const {handleHttpUpload}=useFileUpload();
+const BeforehandleHttpUpload=async (options: UploadRequestOptions)=>{
+    const res=await handleHttpUpload(options);
+    props.formData.avatar= res;
+}
 </script>
 
 <template>
@@ -101,6 +89,7 @@ const handleHttpUpload = async (options: UploadRequestOptions) => {
         label-width="auto"
         class="user-form"
         style="width: 400px; display:flex; flex-direction: column;"
+        @submit.prevent
     >
       <el-form-item label="用户头像" prop="avatar" >
         <el-upload
@@ -109,7 +98,7 @@ const handleHttpUpload = async (options: UploadRequestOptions) => {
             :show-file-list="false"
             list-type="picture-card"
             method="post"
-            :http-request="handleHttpUpload"
+            :http-request="BeforehandleHttpUpload"
         >
           <template v-if="formData.avatar">
             <img  :src="formData.avatar" class="avatar" width="146px" height="146px" />

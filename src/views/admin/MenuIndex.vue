@@ -54,6 +54,7 @@
           label-width="auto"
           class="user-form"
           style="width: 400px; display:flex; flex-direction: column;"
+          @submit.prevent
       >
         <el-form-item label="菜单名称" prop="menuName" >
           <el-input
