@@ -1,6 +1,6 @@
 <template>
   <div class="main-content card">
-     <transition name="page-transition" >
+     <transition name="page-transition" mode="out-in">
        <router-view  />
      </transition>
   </div>
@@ -41,26 +41,12 @@ router-view {
   transition: all 0.6s ease;
 }
 .page-transition-enter-from {
-  transform: translateX(100%);
+  margin-left: -20px;
   opacity: 0;
 }
 .page-transition-leave-to {
-  transform: translateX(-100%);
+  margin-left: 20px;
   opacity: 0;
 }
-/* fade-transform */
-.fade-transform-leave-active,
-.fade-transform-enter-active {
-  transition: all 0.2s;
-}
-.fade-transform-enter-from {
-  opacity: 0;
-  transition: all 0.2s;
-  transform: translateX(-30px);
-}
-.fade-transform-leave-to {
-  opacity: 0;
-  transition: all 0.2s;
-  transform: translateX(30px);
-}
+
 </style>

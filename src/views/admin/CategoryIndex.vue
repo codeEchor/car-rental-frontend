@@ -92,6 +92,7 @@ import Category = API.Category;
 import CategoryAddDto = API.CategoryAddDto;
 import CategoryUpdateDto = API.CategoryUpdateDto;
 import CategoryPageDto = API.CategoryPageDto;
+import {cloneDeep} from "lodash";
 const addOrUpdateFormRef=ref();
 const addOrUpdateRules = reactive({
   categoryName: [
@@ -144,7 +145,7 @@ const deleteCategorysBatch=async ()=>{
 }
 // 打开修改车型的弹框
 const openCategoryChangeDialog=(category:Category)=>{
-  categoryDialog.value.categoryAddDto=category as CategoryAddDto;
+  categoryDialog.value.categoryAddDto=cloneDeep(category) as CategoryAddDto;
   categoryDialog.value.id=category.id as number;
   categoryDialog.value.title='修改车型';
   categoryDialog.value.visible=true;

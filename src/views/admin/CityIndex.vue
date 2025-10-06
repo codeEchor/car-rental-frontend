@@ -86,6 +86,7 @@ import City = API.City;
 import CityAddDto = API.CityAddDto;
 import CityUpdateDto = API.CityUpdateDto;
 import CityPageDto = API.CityPageDto;
+import {cloneDeep} from "lodash";
 const addOrUpdateFormRef=ref();
 const addOrUpdateRules = reactive({
   cityName: [
@@ -138,7 +139,7 @@ const deleteCitysBatch=async ()=>{
 }
 // 打开修改城市的弹框
 const openCityChangeDialog=(city:City)=>{
-  cityDialog.value.cityAddDto=city as CityAddDto;
+  cityDialog.value.cityAddDto=cloneDeep(city) as CityAddDto;
   cityDialog.value.id=city.id as number;
   cityDialog.value.title='修改城市';
   cityDialog.value.visible=true;

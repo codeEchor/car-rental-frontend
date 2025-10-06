@@ -110,6 +110,7 @@ import BrandAddDto = API.BrandAddDto;
 import BrandUpdateDto = API.BrandUpdateDto;
 import BrandPageDto = API.BrandPageDto;
 import useFileUpload from "@/hooks/useFileUpload.ts";
+import {cloneDeep} from "lodash";
 const addOrUpdateFormRef=ref();
 const addOrUpdateRules = reactive({
   brandName: [
@@ -169,7 +170,7 @@ const deleteBrandsBatch=async ()=>{
 }
 // 打开修改品牌的弹框
 const openBrandChangeDialog=(brand:Brand)=>{
-  brandDialog.value.brandAddDto=brand as BrandAddDto;
+  brandDialog.value.brandAddDto=cloneDeep(brand) as BrandAddDto;
   brandDialog.value.id=brand.id as number;
   brandDialog.value.title='修改品牌';
   brandDialog.value.visible=true;

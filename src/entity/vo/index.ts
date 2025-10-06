@@ -20,7 +20,7 @@ export interface UserVo {
     /**
      * 昵称
      */
-    nickname?: string;
+    nickName?: string;
 
     /**
      * 用户的金额

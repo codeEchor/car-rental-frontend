@@ -11,6 +11,7 @@ import * as cityController from "./cityController";
 import * as categoryController from "./categoryController";
 import * as carController from "./carController";
 import * as brandController from "./brandController";
+import * as orderController from "./orderController";
 import * as fileUploadController from "./fileUploadController";
 export default {
   userController,
@@ -22,5 +23,6 @@ export default {
   categoryController,
   carController,
   brandController,
+  orderController,
   fileUploadController,
 };

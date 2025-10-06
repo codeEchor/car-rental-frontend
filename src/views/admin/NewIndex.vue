@@ -30,7 +30,11 @@
           <el-avatar shape="square" :size="50" :src="scope.row.newImg" />
         </template>
       </el-table-column>
-      <el-table-column prop="content" label="新闻内容" width="150" align="center"/>
+      <el-table-column  label="新闻内容" width="150" align="center">
+         <template #default="scope">
+            <el-button size="small" type="primary" @click="showContentDialog(scope.row.content)">查看内容</el-button>
+         </template>
+      </el-table-column>
       <el-table-column prop="author" label="新闻作者" width="150" align="center"/>
       <el-table-column  label="操作"   align="center">
         <template #default="scope">
@@ -50,7 +54,7 @@
     <!--    新增或者修改新闻弹框组件-->
     <el-drawer
         v-model="newsDialog.visible"
-        size="30%"
+        size="50%"
         @close="handleCancel"
     >
       <template #header="{ titleId, titleClass }">
@@ -92,12 +96,12 @@
               clearable
           />
         </el-form-item>
-        <el-form-item label="新闻内容" prop="content" >
-          <el-input
-              v-model="newsDialog.newsAddDto.content"
-              placeholder="请输入新闻内容"
-              clearable
-          />
+        <el-form-item label="新闻内容" prop="content"  style="width: 700px">
+          <MyEditor
+                    v-if="newsDialog.visible"
+                    :content="newsDialog.newsAddDto.content"
+                    @update:content="receive"
+                    :is-read="false"/>
         </el-form-item>
         <el-form-item>
           <div class="form-actions">
@@ -109,6 +113,15 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+<!--    新闻详情的弹框-->
+    <el-dialog v-model="contentDialog.visible" title="新闻内容"
+               :close-on-click-modal="false"
+               width="800" align-center>
+      <MyEditor v-if="contentDialog.visible"
+                :content="contentDialog.content"
+                :is-read="contentDialog.isRead"
+      ></MyEditor>
+    </el-dialog>
   </div>
 </template>
 
@@ -124,17 +137,41 @@ import NewsAddDto = API.NewsAddDto;
 import NewsUpdateDto = API.NewsUpdateDto;
 import NewsPageDto = API.NewsPageDto;
 import useFileUpload from "@/hooks/useFileUpload.ts";
+import MyEditor from "@/components/editor/MyEditor.vue";
+import useUserStore from "@/stores/userStore.ts";
+import {cloneDeep} from "lodash";
 const addOrUpdateFormRef=ref();
+const store=useUserStore();
 const addOrUpdateRules = reactive({
+  newImg: [
+    { required: true, message: '请输入新闻封面', trigger: 'blur' },
+  ],
   title: [
     { required: true, message: '请输入新闻标题', trigger: 'blur' },
     { min: 1, message: '新闻标题长度不能小于1个字符', trigger: 'blur' }
   ],
   content: [
     { required: true, message: '请输入新闻内容', trigger: 'blur' },
-    { min: 1, message: '新闻标题长度不能小于1个字符', trigger: 'blur' }
+    { min: 1, message: '新闻内容长度不能小于1个字符', trigger: 'blur' }
   ],
 });
+const contentDialog=ref({
+   visible:false,
+   content:'',
+   isRead:false
+})
+// 记录修改新闻的内容
+let newContent='';
+// 接收子组件修改后的新闻内容
+const receive=(value:string)=>{
+  newContent=value;
+}
+// 打开查看新闻详情的弹框
+const showContentDialog=(content:string)=>{
+  contentDialog.value.visible=true;
+  contentDialog.value.content=content;
+  contentDialog.value.isRead=true;
+}
 // 照片上传
 const {handleHttpUpload}=useFileUpload();
 const BeforehandleHttpUpload=async (options: UploadRequestOptions)=>{
@@ -187,7 +224,7 @@ const deleteNewssBatch=async ()=>{
 }
 // 打开修改新闻的弹框
 const openNewsChangeDialog=(news:News)=>{
-  newsDialog.value.newsAddDto=news as NewsAddDto;
+  newsDialog.value.newsAddDto=cloneDeep(news) as NewsAddDto;
   newsDialog.value.id=news.id as number;
   newsDialog.value.title='修改新闻';
   newsDialog.value.visible=true;
@@ -213,7 +250,11 @@ const handleSave = async () => {
     {
       console.log('新闻新增对象', newsDialog.value.newsAddDto);
       // 执行上传并等待结果
-      const res=await insertNews(newsDialog.value.newsAddDto);
+      // todo 后期需要改为store中的用户
+      const res=await insertNews({
+        ...newsDialog.value.newsAddDto,
+        author: 'admin'  //store.LoginUser.username
+      });
       if(res.data.code==2000)
       {
         // 重置表单数据，关闭弹窗
@@ -227,7 +268,10 @@ const handleSave = async () => {
     }else {
       const res=await updateNews({
         id:newsDialog.value.id
-      },newsDialog.value.newsAddDto);
+      },{
+        ...newsDialog.value.newsAddDto,
+        content:newContent
+      });
       if(res.data.code==2000)
       {
         // 重置表单数据，关闭弹窗
@@ -251,7 +295,10 @@ const handleSaveAndContinue = async () => {
     // 表单验证
     await addOrUpdateFormRef.value.validate();
     // 这里可以添加API调用逻辑，保存新闻信息
-    const res=await insertNews(newsDialog.value.newsAddDto);
+    const res=await insertNews({
+      ...newsDialog.value.newsAddDto,
+      author:store.LoginUser.username
+    });
     if(res.data.code==2000)
     {
       // 刷新数据

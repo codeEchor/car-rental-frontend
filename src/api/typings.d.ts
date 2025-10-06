@@ -167,6 +167,13 @@ declare namespace API {
     description?: string;
   };
 
+  type BaseResponseResultPageListOrder = {
+    code?: number;
+    message?: string;
+    data?: ResultPageListOrder;
+    description?: string;
+  };
+
   type BaseResponseResultPageListRole = {
     code?: number;
     message?: string;
@@ -243,6 +250,7 @@ declare namespace API {
     displacement?: string;
     fuelType?: string;
     description?: string;
+    detail?: string;
   };
 
   type CarPageDto = {
@@ -271,6 +279,7 @@ declare namespace API {
     displacement?: string;
     fuelType?: string;
     description?: string;
+    detail?: string;
   };
 
   type CarVo = {
@@ -278,7 +287,9 @@ declare namespace API {
     carName?: string;
     carImg?: string;
     brandId?: number;
+    brand?: Brand;
     categoryId?: number;
+    category?: Category;
     status?: number;
     year?: number;
     stock?: number;
@@ -286,6 +297,7 @@ declare namespace API {
     color?: string;
     favoritesNum?: number;
     cityId?: number;
+    city?: City;
     doorCount?: string;
     seatCount?: string;
     mileage?: string;
@@ -293,6 +305,7 @@ declare namespace API {
     displacement?: string;
     fuelType?: string;
     description?: string;
+    detail?: string;
   };
 
   type Category = {
@@ -366,12 +379,24 @@ declare namespace API {
     id: number;
   };
 
+  type deleteOrderParams = {
+    id: number;
+  };
+
   type deleteRoleParams = {
     id: number;
   };
 
   type deleteUserParams = {
     id: number;
+  };
+
+  type Dict = {
+    empty?: boolean;
+  };
+
+  type EditorFileUploadParams = {
+    file: string;
   };
 
   type emailLoginParams = {
@@ -458,6 +483,10 @@ declare namespace API {
 
   type getNewsByIdParams = {
     id: number;
+  };
+
+  type getOrderByNameParams = {
+    orderPageDto: OrderPageDto;
   };
 
   type getRoleByIdParams = {
@@ -579,6 +608,47 @@ declare namespace API {
     newImg?: string;
   };
 
+  type Order = {
+    id?: number;
+    orderId?: number;
+    userId?: number;
+    status?: number;
+    carId?: number;
+    amount?: number;
+    orderTime?: string;
+    pickCarTime?: string;
+    turnCarTime?: string;
+    realTurnTime?: string;
+    pickCarLocation?: string;
+    pickCarPhone?: string;
+    carName?: string;
+    carImg?: string;
+    username?: string;
+    userPhone?: string;
+    renderDay?: number;
+    remark?: string;
+    isDelete?: number;
+    createTime?: string;
+    updateTime?: string;
+  };
+
+  type OrderPageDto = {
+    pageSize?: number;
+    pageNum?: number;
+    username?: string;
+  };
+
+  type OrderToDepartureDto = {
+    id?: number;
+    pickCarLocation?: string;
+    pickCarPhone?: string;
+  };
+
+  type OrderToException = {
+    id?: number;
+    remark?: string;
+  };
+
   type ResultPageListBrand = {
     pageSize?: number;
     pageNum?: number;
@@ -626,6 +696,13 @@ declare namespace API {
     pageNum?: number;
     total?: number;
     data?: News[];
+  };
+
+  type ResultPageListOrder = {
+    pageSize?: number;
+    pageNum?: number;
+    total?: number;
+    data?: Order[];
   };
 
   type ResultPageListRole = {
@@ -745,6 +822,12 @@ declare namespace API {
     avatar?: string;
     nickName?: string;
     money?: number;
+  };
+
+  type UserUpdatePwdDto = {
+    id?: number;
+    password?: string;
+    checkPwd?: string;
   };
 
   type UserUpdateRoleDto = {

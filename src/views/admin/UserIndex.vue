@@ -92,6 +92,7 @@ import {findAllRole} from "@/api/roleController.ts";
 import Pagination from "@/components/pagination/Pagination.vue";
 import CheckBox from "@/components/RoleAssignCheckbox/CheckBox.vue";
 import LZDrawer from "@/components/drawer/LZDrawer.vue";
+import {cloneDeep} from "lodash";
 
 const store=userStore();
 const roles=ref<Role[]>([]);
@@ -224,7 +225,7 @@ const deleteUsersBatch=async ()=>{
 }
 // 打开修改用户的弹框
 const openUserChangeDialog=(userVo:UserVo)=>{
-  userDialog.value.userAddDto=userVo;
+  userDialog.value.userAddDto=cloneDeep(userVo);
   userDialog.value.id=userVo.id as number;
   userDialog.value.title='修改用户';
   userDialog.value.visible=true;

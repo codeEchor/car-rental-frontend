@@ -20,12 +20,51 @@
       </el-dropdown-menu>
     </template>
   </el-dropdown>
+  <el-dialog v-model="userInfo.visible" title="个人中心" align-center width="600"  :close-on-click-modal="false">
+    <el-avatar :src="userInfo.userVo.avatar" size="large" style="margin: 10px auto;display: block"  />
+    <el-form :model="userInfo.userVo" @submit.prevent="false" >
+      <el-form-item label="账号">
+        <el-input disabled v-model="userInfo.userVo.username"/>
+      </el-form-item>
+      <el-form-item label="昵称">
+        <el-input v-model="userInfo.userVo.nickName"/>
+      </el-form-item>
+      <el-form-item label="电话">
+        <el-input v-model="userInfo.userVo.phone"/>
+      </el-form-item>
+      <el-form-item label="邮箱">
+        <el-input disabled v-model="userInfo.userVo.email"/>
+      </el-form-item>
+      <el-form-item label="余额" style="width: 300px;">
+        <el-input type="number" min="0" v-model="userInfo.userVo.money"/>
+      </el-form-item>
+      <el-form-item >
+        <el-button type="primary" @click="updateUserInfo">保存</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+  <el-dialog v-model="userPwd.visible" title="修改密码" align-center width="600" :close-on-click-modal="false">
+    <el-form :model="userPwd"  @submit.prevent="false">
+      <el-form-item label="新密码" prop="password">
+        <el-input type="password" v-model="userPwd.password"></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码" prop="checkPwd">
+        <el-input type="password" v-model="userPwd.checkPwd"></el-input>
+      </el-form-item>
+      <el-form-item >
+        <el-button type="primary" @click="changePwd">提交</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import {useRouter} from "vue-router";
 import useUserStore from "@/stores/userStore.ts";
 import {ElMessage} from "element-plus";
+import {onMounted, ref} from "vue";
+import type {UserVo} from "@/entity/vo";
+import {getUserById, updatePwd, updateUser} from "@/api/userController.ts";
 const router = useRouter();
 const store=useUserStore();
 const logout=()=>{
@@ -36,12 +75,58 @@ const logout=()=>{
   ElMessage.success("退出成功");
 
 }
+const userPwd=ref({
+  visible:false,
+  password:'',
+  checkPwd:'',
+})
+const changePwd=async ()=>{
+  const res=await updatePwd({
+     password:userPwd.value.password,
+     checkPwd:userPwd.value.checkPwd,
+     id:store.LoginUser.id || 36
+  })
+  if(res.data.code==2000)
+  {
+    ElMessage.success('更新成功');
+    userPwd.value.visible=false;
+  }else {
+    ElMessage.error(res.data.description);
+  }
+}
 const openChangePwdDialog=()=>{
+   userPwd.value.visible=true;
 
 }
-const openUserInfoDialog=()=>{
+const userInfo=ref({
+   visible:false,
+   userVo:{} as UserVo
+})
 
+const openUserInfoDialog=async ()=>{
+  const res=await getUserById({
+    id:store.LoginUser.id || 36
+  })
+  if(res.data.code==2000)
+  {
+    userInfo.value.userVo=res.data.data as UserVo;
+  }
+  userInfo.value.visible=true;
 }
+const updateUserInfo=async ()=>{
+   const res=await updateUser({
+     id:userInfo.value.userVo.id || 36
+   },userInfo.value.userVo)
+  if(res.data.code==2000)
+  {
+    userInfo.value.visible=false;
+    ElMessage.success('更新成功');
+  }else {
+    ElMessage.error(res.data.description);
+  }
+}
+onMounted(async ()=>{
+})
 </script>
 
 <style scoped>

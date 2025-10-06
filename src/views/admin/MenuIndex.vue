@@ -107,6 +107,7 @@ import {
   listMenusPage,
   updateMenus
 } from "@/api/menusController.ts";
+import {cloneDeep} from "lodash";
 const addOrUpdateFormRef=ref();
 const addOrUpdateRules = reactive({
   menuName: [
@@ -158,7 +159,7 @@ const deleteMenussBatch=async ()=>{
 }
 // 打开修改菜单的弹框
 const openMenusChangeDialog=(menus:Menus)=>{
-  menusDialog.value.menusAddDto=menus as MenusAddDto;
+  menusDialog.value.menusAddDto=cloneDeep(menus) as MenusAddDto;
   menusDialog.value.id=menus.id as number;
   menusDialog.value.title='修改菜单';
   menusDialog.value.visible=true;

@@ -129,6 +129,7 @@ import FavoritesAddDto = API.FavoritesAddDto;
 import FavoritesUpdateDto = API.FavoritesUpdateDto;
 import FavoritesPageDto = API.FavoritesPageDto;
 import useFileUpload from "@/hooks/useFileUpload.ts";
+import {cloneDeep} from "lodash";
 const addOrUpdateFormRef=ref();
 const addOrUpdateRules = reactive({
   carName: [
@@ -196,7 +197,7 @@ const deleteFavoritessBatch=async ()=>{
 }
 // 打开修改收藏的弹框
 const openFavoritesChangeDialog=(favorites:Favorites)=>{
-  favoritesDialog.value.favoritesAddDto=favorites as FavoritesAddDto;
+  favoritesDialog.value.favoritesAddDto=cloneDeep(favorites) as FavoritesAddDto;
   favoritesDialog.value.id=favorites.id as number;
   favoritesDialog.value.title='修改收藏';
   favoritesDialog.value.visible=true;

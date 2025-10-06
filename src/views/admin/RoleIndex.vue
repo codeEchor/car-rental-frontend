@@ -122,6 +122,7 @@ import {ElMessage} from "element-plus";
 import Pagination from "@/components/pagination/Pagination.vue";
 import type {Menus, Role} from "@/entity/domain";
 import {findMenusByRid, getAllMenus} from "@/api/menusController.ts";
+import {cloneDeep} from "lodash";
 const defaultProps = {
   children: 'children',
   label: 'menuName',
@@ -249,7 +250,7 @@ const deleteRolesBatch=async ()=>{
 }
 // 打开修改角色的弹框
 const openRoleChangeDialog=(role:Role)=>{
-  roleDialog.value.roleAddDto=role as RoleAddDto;
+  roleDialog.value.roleAddDto=cloneDeep(role) as RoleAddDto;
   roleDialog.value.id=role.id as number;
   roleDialog.value.title='修改角色';
   roleDialog.value.visible=true;

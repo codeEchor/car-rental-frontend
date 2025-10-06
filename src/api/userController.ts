@@ -171,6 +171,21 @@ export async function updateUser(
   });
 }
 
+/** 更新用户的密码的接口 POST /user/updatePwd */
+export async function updatePwd(
+  body: API.UserUpdatePwdDto,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseObject>("/user/updatePwd", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 更新用户角色接口 POST /user/updateUserRole */
 export async function updateUserRole(
   body: API.UserUpdateRoleDto,
