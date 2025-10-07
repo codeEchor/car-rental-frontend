@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ElCard, ElInput, ElButton, ElRow, ElCol, ElPagination } from 'element-plus';
-import type { News } from '@/api/typings';
-import { findAllNews, listNewsPage } from '@/api/newsController';
+import {onMounted, ref} from 'vue';
+import {ElButton, ElCard, ElCol, ElInput, ElRow} from 'element-plus';
+import {listPageNews} from '@/api/newsController';
 import Pagination from '@/components/admin/pagination/Pagination.vue';
+import News = API.News;
+import FrontNewsPageDto = API.FrontNewsPageDto;
 
 // 分页数据
 // 分页对象
@@ -18,7 +19,8 @@ const handleCurrentChange=(val: number)=>{
       ...pageData.value,
       pageNum: val
     };
-    // 重新加载数据 
+    // 重新加载数据
+   initNews(pageData.value.pageNum);
 }
 // 当pageSizeArr改变时执行
 const handleSizeChange=(val:number)=>{
@@ -27,66 +29,32 @@ const handleSizeChange=(val:number)=>{
     pageSize: val
   }
   // 重新加载数据
+  initNews(pageData.value.pageNum);
 }
 // 新闻数据
 const newsList = ref<News[]>([]);
-const searchKeyword = ref('');
-
-// 模拟数据（与图片中的内容完全一致）
-const mockNews: News[] = [
+const forData=ref<FrontNewsPageDto>({});
+// 初始化新闻数据
+const initNews=async (current:number)=>{
+  pageData.value.pageNum=current;
+   const res=await listPageNews({
+     ...forData.value,
+     pageNum:pageData.value.pageNum,
+     pageSize:pageData.value.pageSize,
+   })
+  if(res.data.code==2000)
   {
-    id: 1,
-    title: '租车公司报价表,租车一天的大概多少钱?',
-    newImg: '/demo.jpg',
-    content: '在车辆类型方面，豪华车的租金最高，中高档车的租金相对较高，普通轿车的租金相对较低。根据车型的不同，租金...',
-    author: '',
-    createTime: '2025-04-14 07:09:54'
-  },
-  {
-    id: 2,
-    title: '上海租车公司哪家好？便宜靠谱租车平台推荐',
-    newImg: '/demo.jpg',
-    content: '随着经济的发展和人民生活水平的提高，租车行业在上海迅速崛起，成为了满足人们出行需求的重要方式之一。从家...',
-    author: '',
-    createTime: '2025-04-06 15:48:39'
-  },
-  {
-    id: 3,
-    title: '新手租车攻略：第一次租车需要注意什么？',
-    newImg: '/demo.jpg',
-    content: '随着经济的发展和人民生活水平的提高，越来越多的人选择租车作为出行方式。对于新手租车者来说，了解租车攻略...',
-    author: '',
-    createTime: '2025-04-06 15:45:45'
-  },
-  {
-    id: 4,
-    title: '租车需要什么手续以及费用？新手租车必看指南',
-    newImg: '/demo.jpg',
-    content: '随着旅游业的不断发展，租车服务越来越受到人们的欢迎。对于许多旅行者来说，租车是一种灵活、方便的出行方式...',
-    author: '',
-    createTime: '2025-04-06 15:44:19'
-  },
-  {
-    id: 5,
-    title: '商务车租赁公司哪家好？',
-    newImg: '/demo.jpg',
-    content: '随着商务车需求的增长，商务车租赁市场也日益繁荣。在众多商务车租赁公司中，凹凸租车以其独特的优势脱颖而出...',
-    author: '',
-    createTime: '2025-04-06 15:37:01'
-  },
-  {
-    id: 6,
-    title: '租车需要注意的事项,怎么样租车不踩坑？',
-    newImg: '/demo.jpg',
-    content: '随着经济的发展和人民生活水平的提高，租车已成为人们出行的重要方式之一。租车不仅可以帮助我们解决临时出行...',
-    author: '',
-    createTime: '2025-04-01 17:50:35'
+     newsList.value=res.data.data?.data as News[];
+     pageData.value.pageSize=res.data.data?.pageSize || 6;
+     pageData.value.pageNum=res.data.data?.pageNum || 1;
+     pageData.value.total=res.data.data?.total ||0;
+    console.log(newsList.value);
   }
-];
-
-// 初始加载数据
-newsList.value = mockNews;
-
+}
+onMounted(()=>{
+   initNews(1);
+})
+const searchKeyword = ref('');
 // 搜索功能
 const handleSearch = () => {
 
@@ -110,34 +78,46 @@ const handleSearch = () => {
       </el-button>
     </div>
     
-    <!-- 新闻列表 - 两列网格布局 -->
-    <el-row :gutter="15">
-      <el-col :span="12" v-for="news in newsList" :key="news.id">
-        <el-card class="news-card" shadow="never" :body-style="{ padding: '0' }">
-          <div class="news-content">
-            <div class="news-image">
-              <img :src="news.newImg" :alt="news.title" />
+
+    <div style="height: 600px">
+      <!-- 新闻列表 - 两列网格布局 -->
+      <el-row :gutter="15">
+        <el-col :span="12" v-for="news in newsList" :key="news.id">
+          <el-card class="news-card" shadow="never" :body-style="{ padding: '0' }">
+            <div class="news-content">
+              <div class="news-image">
+                <img :src="news.newImg" :alt="news.title" />
+              </div>
+              <div class="news-info">
+                <h3 class="news-title">{{ news.title }}</h3>
+                <div class="news-description" v-html="news.content"/>
+                <p class="news-time">{{ news.createTime }}</p>
+              </div>
             </div>
-            <div class="news-info">
-              <h3 class="news-title">{{ news.title }}</h3>
-              <p class="news-description">{{ news.content }}</p>
-              <p class="news-time">{{ news.createTime }}</p>
+          </el-card>
+        </el-col>
+      </el-row>
+      <!-- 分页 -->
+      <div>
+        <el-pagination
+            style="margin-top: 30px; margin-left: 460px;  background-color: rgb(240, 241, 243);"
+            :current-page="pageData.pageNum"
+            :page-size="pageData.pageSize"
+            size="default"
+            layout="slot,prev,pager,next"
+            :total="pageData.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        >
+          <template #default="scope">
+            <div style="display: flex; justify-content: center">
+              <div style="margin-top: 5px;">{{`共 ${pageData.total} 条`}}</div>
             </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-    
-    <!-- 分页 -->
-    <div>
-        <Pagination :total="pageData.total"
-                @handleCurrentChange="handleCurrentChange"
-                @handleSizeChange="handleSizeChange"
-                :page-size-arr="pageSizeArr"
-                :page-num="pageData.pageNum"
-                :page-size="pageData.pageSize">
-    </Pagination>
+          </template>
+        </el-pagination>
+      </div>
     </div>
+
   </div>
 </template>
 
@@ -278,7 +258,14 @@ const handleSearch = () => {
   border-color: #1890ff;
   color: #fff;
 }
-
+:deep(.el-pagination button)
+{
+  background-color: rgb(240, 241, 243)
+}
+:deep(.el-pagination)
+{
+  --el-pagination-bg-color:rgb(240, 241, 243)
+}
 /* 响应式设计 */
 @media (max-width: 768px) {
   .news-container {

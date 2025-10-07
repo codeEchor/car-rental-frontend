@@ -76,6 +76,13 @@ declare namespace API {
     description?: string;
   };
 
+  type BaseResponseListFavoritesVo = {
+    code?: number;
+    message?: string;
+    data?: FavoritesVo[];
+    description?: string;
+  };
+
   type BaseResponseListMenus = {
     code?: number;
     message?: string;
@@ -468,12 +475,39 @@ declare namespace API {
     username?: string;
   };
 
+  type FavoritesVo = {
+    id?: number;
+    carId?: number;
+    carName?: string;
+    carImg?: string;
+    description?: string;
+    userId?: number;
+    username?: string;
+    isDelete?: number;
+    createTime?: string;
+    updateTime?: string;
+    price?: number;
+  };
+
   type FileUploadParams = {
     file: string;
   };
 
   type findMenusByRidParams = {
     rid: number;
+  };
+
+  type FrontNewsPageDto = {
+    pageSize?: number;
+    pageNum?: number;
+    title?: string;
+  };
+
+  type FrontOrderPageDto = {
+    pageSize?: number;
+    pageNum?: number;
+    carName?: string;
+    status?: number;
   };
 
   type generateEmailCodeParams = {
@@ -502,6 +536,10 @@ declare namespace API {
 
   type getFavoritesByIdParams = {
     id: number;
+  };
+
+  type getFavoritesByUsernameParams = {
+    username: string;
   };
 
   type getMenusByIdParams = {

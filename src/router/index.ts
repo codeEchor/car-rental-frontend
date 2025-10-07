@@ -20,6 +20,7 @@ import OrderFront from "@/views/user/OrderFront.vue";
 import FavoritesFront from "@/views/user/FavoritesFront.vue";
 import UserInfo from "@/views/user/UserInfo.vue";
 import PwdChangeFront from "@/views/user/PwdChangeFront.vue";
+import CarDetail from "@/views/user/CarDetail.vue";
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -222,6 +223,11 @@ const router = createRouter({
             path: '/front/update',
             name: 'update',
             component: PwdChangeFront,
+        },
+        {
+            path: `/front/rent/carDetail:id=${1}`,
+            name: 'carDetail',
+            component: CarDetail,
         },
     ],
 })

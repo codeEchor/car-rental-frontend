@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, type UnwrapRef} from 'vue';
 import Pagination from '@/components/admin/pagination/Pagination.vue';
 import { ElSelect, ElOption, ElButton, ElTag, ElPagination, ElCard } from 'element-plus';
 import RentCenterVo = API.RentCenterVo;
 import RentCarDto = API.RentCarDto;
 import {listPageRentCar} from "@/api/carController.ts";
+import City = API.City;
+import {findAllCity} from "@/api/cityController.ts";
+import Category = API.Category;
+import {findAllCategory} from "@/api/categoryController.ts";
+import Brand = API.Brand;
+import {findAllBrand} from "@/api/brandController.ts";
+import {useRouter} from "vue-router";
+// 路由对象
+const router=useRouter();
 // 分页数据
 // 分页对象
 const pageData = ref({
@@ -19,7 +28,7 @@ const handleCurrentChange=(val: number)=>{
       pageNum: val
     };
     // 重新加载数据
- 
+  initCars(pageData.value.pageNum);
 }
 // 当pageSizeArr改变时执行
 const handleSizeChange=(val:number)=>{
@@ -28,61 +37,14 @@ const handleSizeChange=(val:number)=>{
     pageSize: val
   }
   // 重新加载数据
+  initCars(pageData.value.pageNum);
 }
 // 分页大小数组
 const pageSizeArr = [3, 5, 7, 10];
-// 城市数据
-const cities = [
-  { value: 'hefei', label: '合肥' },
-  { value: 'beijing', label: '北京' },
-  { value: 'shanghai', label: '上海' },
-  { value: 'guangzhou', label: '广州' },
-  { value: 'shenzhen', label: '深圳' },
-];
-
-// 类型数据
-const carTypes = [
-  { id: 1, name: '越野型' },
-  { id: 2, name: '豪华型' },
-  { id: 3, name: '商务型' },
-  { id: 4, name: 'SUV' },
-  { id: 5, name: '舒适型' },
-  { id: 6, name: '经济型' },
-];
-
-// 品牌数据
-const carBrands = [
-  { id: 1, name: '哈弗' },
-  { id: 2, name: '丰田' },
-  { id: 3, name: 'Jeep' },
-  { id: 4, name: '保时捷' },
-  { id: 5, name: '雷克萨斯' },
-  { id: 6, name: '凯迪拉克' },
-  { id: 7, name: '特斯拉' },
-  { id: 8, name: '福特' },
-  { id: 9, name: '日产' },
-  { id: 10, name: '本田' },
-  { id: 11, name: '大众' },
-  { id: 12, name: '别克' },
-  { id: 13, name: '奥迪' },
-  { id: 14, name: '宝马' },
-  { id: 15, name: '奔驰' },
-];
-
-// 汽车数据（示例）
-// const cars = [
-//   {
-//     id: 1,
-//     name: '保时捷911',
-//     description: '保时捷911是一款标志性的高性能跑车，以其独特的后置引擎布局、卓越的操控性和经典的设计风格著称。',
-//     price: 300,
-//     image: '/demo.jpg',
-//     tags: ['5座', '2.0T', '95号', '银色'],
-//   }
-// ];
 const formData=ref<RentCarDto>({})
 const cars=ref<RentCenterVo[]>([]);
-const initCars=async ()=>{
+const initCars=async (current:number)=>{
+  pageData.value.pageNum=current;
    const res=await listPageRentCar({
      ...formData.value,
      pageNum:pageData.value.pageNum,
@@ -97,13 +59,82 @@ const initCars=async ()=>{
 
   }
 }
-
+// 城市props
+const CityProps={
+  value:'id',
+  label:'cityName'
+}
+// 所有的城市集合
+const cityList=ref<City[]>([]);
+// 获取所有的城市
+const getAllCity=async ()=>{
+  const res=await findAllCity();
+  if (res.data.code==2000)
+  {
+    cityList.value=res.data.data as City[];
+  }
+}
+// 根据城市进行查询
+const doChangeCity=(value:number)=>{
+   initCars(pageData.value.pageNum);
+}
+// 被选择的汽车的类型
+const selectedType=ref(-1);
+// 汽车的类型
+const categoryList=ref<Category[]>([]);
+// 查询所有的汽车类型
+const getAllCategory=async ()=>{
+  const res=await findAllCategory();
+  if(res.data.code==2000)
+  {
+    categoryList.value=res.data.data as Category[];
+  }
+}
+// 根据选中的汽车类型进行查询
+const doSelectCategory= (id:number=-1)=>{
+  formData.value.categoryId=id;
+  selectedType.value=id;
+  initCars(pageData.value.pageNum);
+}
+// 被选择的品牌
+const selectBrand=ref(-1);
+// 品牌集合
+const brandList=ref<Brand[]>([]);
+// 查询所有的汽车类型
+const getAllBrand=async ()=>{
+  const res=await findAllBrand();
+  if(res.data.code==2000)
+  {
+    brandList.value=res.data.data as Brand[];
+  }
+}
+// 根据选中的品牌进行查询
+const doSelectBrand=(id:number=-1)=>{
+   formData.value.brandId=id;
+   selectBrand.value=id;
+   initCars(pageData.value.pageNum);
+}
 // 重置查询
-const resetQuery = () => {
-
-};
+function resetQuery() {
+  formData.value={};
+  selectBrand.value=-1;
+  selectedType.value=-1;
+  initCars(pageData.value.pageNum);
+}
+// 点击汽车详情
+const handleClick=(id:number)=>{
+  router.push({
+    path:'/front/rent/carDetail',
+    query:{
+      id:1
+    }
+  })
+}
 onMounted(()=>{
-  initCars();
+  initCars(1);
+  getAllCity();
+  getAllCategory();
+  getAllBrand();
 })
 </script>
 
@@ -115,17 +146,12 @@ onMounted(()=>{
       <div class="filter-header">
         <div class="filter-item">
           <span class="filter-label">城市：</span>
-          <el-select
-            v-model="selectedCity"
-            placeholder="请选择城市"
-            style="width: 180px;"
+          <el-select  placeholder="请选择城市" style="width: 180px"
+                      v-model="formData.cityId"
+                      :options="cityList"
+                      :props="CityProps"
+                      @change="doChangeCity"
           >
-            <el-option
-              v-for="city in cities"
-              :key="city.value"
-              :label="city.label"
-              :value="city.value"
-            />
           </el-select>
         </div>
         
@@ -140,12 +166,12 @@ onMounted(()=>{
         <span class="category-label">类型：</span>
         <div class="category-tags">
           <el-button
-            v-for="type in carTypes"
-            :key="type.id"
-            :class="['category-btn', { 'active': selectedType === type.id }]"
-            @click="selectedType = selectedType === type.id ? null : type.id"
+            v-for="category in categoryList"
+            :key="category.id"
+            :class="['category-btn', { 'active': selectedType === category.id }]"
+            @click="doSelectCategory(category.id)"
           >
-            {{ type.name }}
+            {{ category.categoryName }}
           </el-button>
         </div>
       </div>
@@ -155,12 +181,12 @@ onMounted(()=>{
         <span class="brand-label">品牌：</span>
         <div class="brand-tags">
           <el-button
-            v-for="brand in carBrands"
+            v-for="brand in brandList"
             :key="brand.id"
-            :class="['brand-btn', { 'active': selectedBrand === brand.id }]"
-            @click="selectedBrand = selectedBrand === brand.id ? null : brand.id"
+            :class="['brand-btn', { 'active': selectBrand === brand.id }]"
+            @click="doSelectBrand(brand.id)"
           >
-            {{ brand.name }}
+            {{ brand.brandName }}
           </el-button>
         </div>
       </div>
@@ -175,7 +201,9 @@ onMounted(()=>{
             :key="car.id"
             class="car-card"
             shadow="hover"
-            :body-style="{ padding: '0' }"
+            @click="handleClick(car.id)"
+            body-class="car-content"
+            :body-style="{ padding: '0', }"
           >
             <div class="car-content">
               <div class="car-image">
@@ -198,13 +226,22 @@ onMounted(()=>{
           </el-card>
         </el-col>
         <el-col :span="24">
-             <Pagination :total="pageData.total"
-                @handleCurrentChange="handleCurrentChange"
-                @handleSizeChange="handleSizeChange"
-                :page-size-arr="pageSizeArr"
-                :page-num="pageData.pageNum"
-                :page-size="pageData.pageSize">
-    </Pagination>
+          <el-pagination
+              style="margin-top: 30px; margin-left: 460px;  "
+              :current-page="pageData.pageNum"
+              :page-size="pageData.pageSize"
+              size="default"
+              layout="slot,prev,pager,next"
+              :total="pageData.total"
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+          >
+            <template #default="scope">
+              <div style="display: flex; justify-content: center">
+                <div style="margin-top: 5px;">{{`共 ${pageData.total} 条`}}</div>
+              </div>
+            </template>
+          </el-pagination>
         </el-col>
       </el-row>
     </div>
@@ -340,7 +377,9 @@ onMounted(()=>{
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
-
+.car-content:hover {
+  cursor: pointer;
+}
 .car-item {
   display: flex;
   border: 1px solid #e4e7ed;

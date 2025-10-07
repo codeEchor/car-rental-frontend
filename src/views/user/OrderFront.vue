@@ -2,12 +2,35 @@
 import { ref, onMounted } from 'vue'
 import { ElInput, ElSelect, ElButton, ElTable, ElTableColumn, ElTag, ElImage, ElMessage } from 'element-plus'
 import type { Order, OrderPageDto } from '@/api/typings'
-import { getOrderByName, updateToDeparture, updateToException } from '@/api/orderController'
+import {getOrderByName, listPageOrders, updateToDeparture, updateToException} from '@/api/orderController'
 import Pagination from '@/components/admin/pagination/Pagination.vue'
+import FrontOrderPageDto = API.FrontOrderPageDto;
 // 响应式数据
 const carName = ref('')
-const orderStatus = ref('')
-const orderList = ref<Order[]>([])
+const orderStatus = ref('');
+// 订单数据
+const orderList = ref<Order[]>([]);
+// 表单数据
+const formData=ref<FrontOrderPageDto>({})
+// 初始化数据
+const initOrders=async (current:number)=>{
+    pageData.value.pageNum=current;
+    const res=await listPageOrders({
+      ...formData.value,
+      pageNum:pageData.value.pageNum,
+      pageSize:pageData.value.pageSize,
+    })
+  if(res.data.code==2000)
+  {
+    orderList.value=res.data.data?.data as Order[];
+    pageData.value.pageSize=res.data.data?.pageSize || 6;
+    pageData.value.pageNum=res.data.data?.pageNum || 1;
+    pageData.value.total=res.data.data?.total ||0;
+  }
+}
+onMounted(()=>{
+   initOrders(1);
+})
 // 分页对象
 const pageData = ref({
   total: 0,
@@ -21,7 +44,7 @@ const handleCurrentChange=(val: number)=>{
       pageNum: val
     };
     // 重新加载数据
- 
+    initOrders(pageData.value.pageNum);
 }
 // 当pageSizeArr改变时执行
 const handleSizeChange=(val:number)=>{
@@ -30,184 +53,29 @@ const handleSizeChange=(val:number)=>{
     pageSize: val
   }
   // 重新加载数据
+  initOrders(pageData.value.pageNum);
 }
 
 // 订单状态映射
-const statusMap = {
+const statusMap:Record<number, { label:string,type:'primary' |'success' | 'warning' | 'danger' | 'info'}> = {
   0: { label: '待发车', type: 'primary' },
-  1: { label: '已取消', type: 'danger' },
-  2: { label: '已还车', type: 'success' },
-  3: { label: '订单异常', type: 'warning' }
-}
-
-// 模拟订单数据
-const mockOrders: Order[] = [
-  {
-    id: 1,
-    carName: '奔驰AMG',
-    carImg: '/demo.jpg',
-    pickCarTime: '2025-05-09',
-    turnCarTime: '2025-05-16',
-    realTurnTime: '',
-    status: 0,
-    pickCarLocation: '',
-    pickCarPhone: '',
-    amount: 1400,
-    renderDay: 7,
-    remark: ''
-  },
-  {
-    id: 2,
-    carName: '奔驰AMG',
-    carImg: '/demo.jpg',
-    pickCarTime: '2025-05-06',
-    turnCarTime: '2025-05-07',
-    realTurnTime: '',
-    status: 1,
-    pickCarLocation: '',
-    pickCarPhone: '',
-    amount: 200,
-    renderDay: 1,
-    remark: ''
-  },
-  {
-    id: 3,
-    carName: '宝马3系',
-    carImg: '/demo.jpg',
-    pickCarTime: '2025-04-23',
-    turnCarTime: '2025-04-30',
-    realTurnTime: '2025-05-06 16:24:57',
-    status: 2,
-    pickCarLocation: '飞驰汽车政务区店',
-    pickCarPhone: '13989997788',
-    amount: 700,
-    renderDay: 7,
-    remark: ''
-  },
-  {
-    id: 4,
-    carName: '雷克萨斯LM',
-    carImg: '/demo.jpg',
-    pickCarTime: '2025-04-18',
-    turnCarTime: '2025-04-25',
-    realTurnTime: '',
-    status: 0,
-    pickCarLocation: '',
-    pickCarPhone: '',
-    amount: 2100,
-    renderDay: 7,
-    remark: ''
-  },
-  {
-    id: 5,
-    carName: '奔驰AMG',
-    carImg: '/demo.jpg',
-    pickCarTime: '2025-04-18',
-    turnCarTime: '2025-04-19',
-    realTurnTime: '2025-04-18 15:45:14',
-    status: 2,
-    pickCarLocation: '政务区3',
-    pickCarPhone: '12312312312',
-    amount: 200,
-    renderDay: 1,
-    remark: ''
-  },
-  {
-    id: 6,
-    carName: '奔驰AMG',
-    carImg: '/demo.jpg',
-    pickCarTime: '2025-04-16',
-    turnCarTime: '2025-04-17',
-    realTurnTime: '',
-    status: 3,
-    pickCarLocation: '',
-    pickCarPhone: '',
-    amount: 200,
-    renderDay: 1,
-    remark: '这辆车出问题了。'
-  },
-  {
-    id: 7,
-    carName: '奔驰AMG',
-    carImg: '/demo.jpg',
-    pickCarTime: '2025-04-16',
-    turnCarTime: '2025-04-17',
-    realTurnTime: '2025-04-18 15:45:15',
-    status: 2,
-    pickCarLocation: '',
-    pickCarPhone: '',
-    amount: 200,
-    renderDay: 1,
-    remark: ''
-  }
-]
-
-// 获取订单列表
-const fetchOrderList = async (page: number = 1) => {
-  try {
-    const params: OrderPageDto = {
-      pageNum: page,
-      pageSize: pageData.value.pageSize,
-      username: '', // 这里可以根据实际需求传入用户名参数
-    }
-    
-    const response = await getOrderByName({ orderPageDto: params })
-    if (response.code === 200 && response.data) {
-      orderList.value = response.data.data || []
-      pageData.value.total = response.data.total || 0
-      pageData.value.pageNum = page
-    } else {
-      // API返回异常，使用模拟数据
-      console.log('API返回异常，使用模拟数据')
-      // 模拟分页
-      const startIndex = (page - 1) * pageData.value.pageSize
-      const endIndex = startIndex + pageData.value.pageSize
-      orderList.value = mockOrders.slice(startIndex, endIndex)
-      pageData.value.total = mockOrders.length
-      pageData.value.pageNum = page
-    }
-  } catch (error) {
-    console.error('获取订单列表失败:', error)
-    // 请求失败，使用模拟数据
-    ElMessage.warning('使用模拟数据展示')
-    // 模拟分页
-    const startIndex = (page - 1) * pageData.value.pageSize
-    const endIndex = startIndex + pageData.value.pageSize
-    orderList.value = mockOrders.slice(startIndex, endIndex)
-    pageData.value.total = mockOrders.length
-    pageData.value.pageNum = page
-  }
+  1: { label: '发车', type: 'success' },
+  2: { label: '待取车', type: 'warning' },
+  3: { label: '已取车', type: 'success' },
+  4: { label: '完成', type: 'success' },
+  5: { label: '订单取消', type: 'danger' },
+  6: { label: '订单异常', type: 'warning' }
 }
 
 // 搜索订单
-const handleSearch = () => {
-  // 根据carName和orderStatus进行筛选
-  let filteredOrders = mockOrders
-  
-  if (carName.value) {
-    filteredOrders = filteredOrders.filter(order => 
-      order.carName?.includes(carName.value || '')
-    )
-  }
-  
-  if (orderStatus.value) {
-    filteredOrders = filteredOrders.filter(order => 
-      order.status === parseInt(orderStatus.value || '0')
-    )
-  }
-  
-  // 模拟分页
-  const startIndex = (pageData.value.pageNum - 1) * pageData.value.pageSize
-  const endIndex = startIndex + pageData.value.pageSize
-  orderList.value = filteredOrders.slice(startIndex, endIndex)
-  pageData.value.total = filteredOrders.length
+const handleSearch = async () => {
+  await initOrders(pageData.value.pageNum);
 }
 
 // 重置搜索
 const handleReset = () => {
-  carName.value = ''
-  orderStatus.value = ''
-  fetchOrderList()
+   formData.value={};
+   initOrders(pageData.value.pageNum);
 }
 
 // 处理订单操作
@@ -223,7 +91,7 @@ const handleOrderAction = async (orderId: number, action: 'departure' | 'excepti
       // 取消订单的逻辑
       ElMessage.success('订单已取消')
     }
-    fetchOrderList(pageData.value.pageNum)
+   // fetchOrderList(pageData.value.pageNum)
   } catch (error) {
     console.error('操作订单失败:', error)
     // 在模拟环境中直接更新本地数据
@@ -246,33 +114,33 @@ const handleOrderAction = async (orderId: number, action: 'departure' | 'excepti
     }
   }
 }
-// 组件挂载时获取数据
-onMounted(() => {
-  fetchOrderList()
-})
+
 </script>
 
 <template>
   <div class="order-container">
     <h1 class="order-title">我的订单</h1>
     
-    <el-card style="height: 700px;">
+    <el-card style="height: 900px;">
        <!-- 搜索区域 -->
     <div class="search-section">
       <el-input
-        v-model="carName"
+        v-model="formData.carName"
         placeholder="请输入车辆名称查询"
         style="width: 200px; margin-right: 10px;"
       />
       <el-select
-        v-model="orderStatus"
+        v-model="formData.status"
         placeholder="请选择订单状态查询"
         style="width: 200px; margin-right: 10px;"
       >
         <el-option label="待发车" value="0" />
-        <el-option label="已取消" value="1" />
-        <el-option label="已还车" value="2" />
-        <el-option label="订单异常" value="3" />
+        <el-option label="发车" value="1" />
+        <el-option label="待取车" value="2" />
+        <el-option label="已取车" value="3" />
+        <el-option label="完成" value="4" />
+        <el-option label="订单取消" value="5" />
+        <el-option label="订单异常" value="6" />
       </el-select>
       <el-button type="primary" @click="handleSearch">查询</el-button>
       <el-button @click="handleReset" style="margin-left: 10px;">重置</el-button>
@@ -335,13 +203,22 @@ onMounted(() => {
     
     <!-- 分页 -->
     <div>
-      <Pagination :total="pageData.total"
-                @handleCurrentChange="handleCurrentChange"
-                @handleSizeChange="handleSizeChange"
-                :page-size-arr="pageSizeArr"
-                :page-num="pageData.pageNum"
-                :page-size="pageData.pageSize">
-    </Pagination>
+      <el-pagination
+          style="margin-top: 30px; margin-left: 460px;"
+          :current-page="pageData.pageNum"
+          :page-size="pageData.pageSize"
+          size="default"
+          layout="slot,prev,pager,next"
+          :total="pageData.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+      >
+        <template #default="scope">
+          <div style="display: flex; justify-content: center">
+            <div style="margin-top: 5px;">{{`共 ${pageData.total} 条`}}</div>
+          </div>
+        </template>
+      </el-pagination>
     </div>
     </el-card>
 
