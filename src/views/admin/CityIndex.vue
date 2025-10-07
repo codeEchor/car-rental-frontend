@@ -80,7 +80,7 @@ import {onMounted, reactive, ref} from "vue";
 import {Delete, Menu, Plus} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
-import Pagination from "@/components/pagination/Pagination.vue";
+import Pagination from "@/components/admin/pagination/Pagination.vue";
 import {deleteCity, deleteCityBatch, insertCity, listCityPage, updateCity} from "@/api/cityController.ts";
 import City = API.City;
 import CityAddDto = API.CityAddDto;

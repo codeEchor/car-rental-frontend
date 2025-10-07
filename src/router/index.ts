@@ -12,6 +12,14 @@ import NewIndex from "@/views/admin/NewIndex.vue";
 import FavoritesIndex from "@/views/admin/FavoritesIndex.vue";
 import BrandIndex from "@/views/admin/BrandIndex.vue";
 import CategoryIndex from "@/views/admin/CategoryIndex.vue";
+import useUserStore from "@/stores/userStore.ts";
+import HomeFront from "@/views/user/HomeFront.vue";
+import RentCenterFront from "@/views/user/RentCenterFront.vue";
+import NewsFront from "@/views/user/NewsFront.vue";
+import OrderFront from "@/views/user/OrderFront.vue";
+import FavoritesFront from "@/views/user/FavoritesFront.vue";
+import UserInfo from "@/views/user/UserInfo.vue";
+import PwdChangeFront from "@/views/user/PwdChangeFront.vue";
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -19,15 +27,15 @@ const router = createRouter({
 
             path: '/user',
             name: 'login',
-            children:[
+            children: [
                 {
                     path: '/user/login',
-                    name: '登录',
+                    name: 'userLogin',
                     component: UserLogin,
                 },
                 {
                     path: '/user/register',
-                    name: '注册',
+                    name: 'register',
                     component: UserRegister,
                 },
             ]
@@ -170,8 +178,78 @@ const router = createRouter({
                 },
             ]
         },
-
+        {
+            path: '/front',
+            name: 'front',
+            redirect: '/front/home',
+            meta: {
+                title: '前台首页',
+            },
+            children: [
+                {
+                    path: '/front/home',
+                    name: 'frontHome',
+                    component: HomeFront,
+                },
+            ]
+        },
+        {
+            path: '/front/rent',
+            name: 'rentCenter',
+            component: RentCenterFront,
+        },
+        {
+            path: '/front/news',
+            name: 'news',
+            component: NewsFront,
+        },
+        {
+            path: '/front/order',
+            name: 'order',
+            component: OrderFront,
+        },
+        {
+            path: '/front/favorites',
+            name: 'favorites',
+            component: FavoritesFront,
+        },
+        {
+            path: '/front/profile',
+            name: 'profile',
+            component: UserInfo,
+        },
+          {
+            path: '/front/update',
+            name: 'update',
+            component: PwdChangeFront,
+        },
     ],
 })
-
+// 配置路由拦截器
+// router.beforeEach((to, from, next)=>{
+//     const store=useUserStore();
+//     if (to.path=='/user/login' || to.path=='/user/register')
+//     {
+//         // 放行
+//         next();
+//     }
+//     else {
+//         // 校验用户是否登录
+//         if (!store.checkLogin)
+//         {
+//             // 没有登录跳转到登录页
+//             next('/user/login');
+//         }
+//         // 如果当前用户是普通用户，访问 / 则跳转到/front
+//         if(!store.isAdmin())
+//         {
+//             if(to.path=='/index/home')
+//             {
+//                 next('/front/home');
+//             }
+//         }
+//         // 放行
+//         next();
+//     }
+// })
 export default router

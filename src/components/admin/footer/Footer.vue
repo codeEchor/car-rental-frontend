@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import useMenuStore from '@/stores/menuStore';
+import useMenuStore from '@/stores/menuStore.ts';
 import {computed} from 'vue';
 
 const menuStore = useMenuStore();

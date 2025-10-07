@@ -103,7 +103,7 @@ import {onMounted, reactive, ref} from "vue";
 import {Avatar, Delete, Menu, Plus} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage, type UploadRequestOptions} from "element-plus";
-import Pagination from "@/components/pagination/Pagination.vue";
+import Pagination from "@/components/admin/pagination/Pagination.vue";
 import {deleteBrand, deleteBrandBatch, insertBrand, listBrandPage, updateBrand} from "@/api/brandController.ts";
 import Brand = API.Brand;
 import BrandAddDto = API.BrandAddDto;

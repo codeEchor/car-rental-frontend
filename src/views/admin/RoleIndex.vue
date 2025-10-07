@@ -119,7 +119,7 @@ import type {RoleAddDto, RolePageDto, RoleUpdateDto} from "@/entity/dto/roleDto"
 import {Delete, Menu, Plus} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
-import Pagination from "@/components/pagination/Pagination.vue";
+import Pagination from "@/components/admin/pagination/Pagination.vue";
 import type {Menus, Role} from "@/entity/domain";
 import {findMenusByRid, getAllMenus} from "@/api/menusController.ts";
 import {cloneDeep} from "lodash";

@@ -97,7 +97,7 @@ import type {MenusAddDto, MenusPageDto, MenusUpdateDto} from "@/entity/dto/menus
 import {Delete, Plus} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
-import Pagination from "@/components/pagination/Pagination.vue";
+import Pagination from "@/components/admin/pagination/Pagination.vue";
 import type {Menus} from "@/entity/domain";
 import {
   deleteBatchMenus,

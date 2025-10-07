@@ -1,27 +1,26 @@
 <script setup lang="ts">
 import {onMounted, ref, toRaw, watch} from "vue";
 import Main from '@/layouts/main/Main.vue'
-import SubMenu from "@/components/aside/SubMenu.vue";
-import Avatar from "@/components/avatar/Avatar.vue";
+import SubMenu from "@/components/admin/aside/SubMenu.vue";
+import Avatar from "@/components/admin/avatar/Avatar.vue";
 import {Expand, Fold} from '@element-plus/icons-vue'
-import Breadcrumb from "@/components/breadcrumb/Breadcrumb.vue";
-import TagsView from "@/components/menutags/TagsView.vue";
+import Breadcrumb from "@/components/admin/breadcrumb/Breadcrumb.vue";
+import TagsView from "@/components/admin/menutags/TagsView.vue";
 import useMenuStore from '@/stores/menuStore'
 import {useRoute} from 'vue-router'
-import Footer from '@/components/footer/Footer.vue'
+import Footer from '@/components/admin/footer/Footer.vue'
 import {listByUsername} from "@/api/menusController.ts";
 import type {Menus} from "@/entity/domain";
+import useUserStore from "@/stores/userStore.ts";
 
 const menuStore = useMenuStore();
 const taggle = () => {
   menuStore.setCollapse();
 };
-const loginUserName = ref("admin");
 
+const store=useUserStore();
 const route = useRoute();
 watch(route,(to,from)=>{
-  // console.log('to=>',to);
-   //console.log('from=>',from);
    const {path,meta,query,params,fullPath}=to;
    menuStore.setTagList({
     path,
@@ -43,7 +42,7 @@ onMounted(async ()=>{
   // 加载菜单数据
   // todo：后续需要改成成store中获取登录用户的名字，动态加载菜单
   const res=await listByUsername({
-    username:'admin'
+    username:store.LoginUser.username || 'admin'
   });
   if(res.data.code==2000)
   {
@@ -101,7 +100,7 @@ onMounted(async ()=>{
              <Breadcrumb />
           </div>
           <div style="display: flex; align-items: center">
-            <span style="margin-right: 15px">{{ loginUserName }}</span>
+            <span style="margin-right: 15px">{{ store.LoginUser.username }}</span>
 <!--            头像组件-->
             <Avatar />
           </div>

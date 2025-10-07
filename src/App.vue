@@ -2,6 +2,7 @@
 import {RouterLink, RouterView, useRoute} from 'vue-router'
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import UserLayout from "@/layouts/UserLayout.vue";
+import ClientLayout from "@/layouts/ClientLayout.vue";
 const route=useRoute();
 </script>
 
@@ -9,10 +10,12 @@ const route=useRoute();
   <div v-if="route.path.startsWith('/user')">
      <UserLayout/>
   </div>
-  <div class="app-container" v-else>
+  <div class="app-container"  v-else-if="route.path.startsWith('/front')">
+    <ClientLayout/>
+  </div>
+  <div v-else class="app-container">
     <BasicLayout/>
   </div>
-
 </template>
 
 <style >

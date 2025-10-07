@@ -89,9 +89,9 @@ import {ElMessage} from "element-plus";
 import userStore from "@/stores/userStore.ts";
 import type {Role} from "@/entity/domain";
 import {findAllRole} from "@/api/roleController.ts";
-import Pagination from "@/components/pagination/Pagination.vue";
-import CheckBox from "@/components/RoleAssignCheckbox/CheckBox.vue";
-import LZDrawer from "@/components/drawer/LZDrawer.vue";
+import Pagination from "@/components/admin/pagination/Pagination.vue";
+import CheckBox from "@/components/admin/RoleAssignCheckbox/CheckBox.vue";
+import LZDrawer from "@/components/admin/drawer/LZDrawer.vue";
 import {cloneDeep} from "lodash";
 
 const store=userStore();

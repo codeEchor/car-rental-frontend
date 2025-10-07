@@ -7,7 +7,7 @@ import type {baseResponse} from "@/axios/interface";
     withCredentials:true
 })
 request.interceptors.response.use((response)=>{
-    // const {data}=response as unknown as baseResponse;
+
     return response;
 })
 export  default request

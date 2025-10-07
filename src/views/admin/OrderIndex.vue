@@ -59,7 +59,7 @@ import {onMounted, reactive, ref} from "vue";
 
 import {Delete} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
-import Pagination from "@/components/pagination/Pagination.vue";
+import Pagination from "@/components/admin/pagination/Pagination.vue";
 import {deleteBatch, deleteOrder, getOrderByName,} from "@/api/orderController.ts";
 import Order = API.Order;
 import OrderPageDto = API.OrderPageDto;

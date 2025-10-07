@@ -41,6 +41,13 @@ declare namespace API {
     description?: string;
   };
 
+  type BaseResponseListCarRecommendVo = {
+    code?: number;
+    message?: string;
+    data?: CarRecommendVo[];
+    description?: string;
+  };
+
   type BaseResponseListCarVo = {
     code?: number;
     message?: string;
@@ -174,6 +181,13 @@ declare namespace API {
     description?: string;
   };
 
+  type BaseResponseResultPageListRentCenterVo = {
+    code?: number;
+    message?: string;
+    data?: ResultPageListRentCenterVo;
+    description?: string;
+  };
+
   type BaseResponseResultPageListRole = {
     code?: number;
     message?: string;
@@ -261,6 +275,18 @@ declare namespace API {
     pageNum?: number;
   };
 
+  type CarRecommendVo = {
+    id?: number;
+    carImg?: string;
+    carName?: string;
+    price?: number;
+    rendNum?: number;
+    seatCount?: string;
+    displacement?: string;
+    fuel_type?: string;
+    color?: string;
+  };
+
   type CarUpdateDto = {
     id?: number;
     carName?: string;
@@ -294,6 +320,7 @@ declare namespace API {
     year?: number;
     stock?: number;
     price?: number;
+    rentNum?: number;
     color?: string;
     favoritesNum?: number;
     cityId?: number;
@@ -649,6 +676,26 @@ declare namespace API {
     remark?: string;
   };
 
+  type RentCarDto = {
+    pageSize?: number;
+    pageNum?: number;
+    cityId?: number;
+    brandId?: number;
+    categoryId?: number;
+  };
+
+  type RentCenterVo = {
+    id?: number;
+    carImg?: string;
+    carName?: string;
+    description?: string;
+    price?: number;
+    seatCount?: string;
+    displacement?: string;
+    fuel_type?: string;
+    color?: string;
+  };
+
   type ResultPageListBrand = {
     pageSize?: number;
     pageNum?: number;
@@ -703,6 +750,13 @@ declare namespace API {
     pageNum?: number;
     total?: number;
     data?: Order[];
+  };
+
+  type ResultPageListRentCenterVo = {
+    pageSize?: number;
+    pageNum?: number;
+    total?: number;
+    data?: RentCenterVo[];
   };
 
   type ResultPageListRole = {

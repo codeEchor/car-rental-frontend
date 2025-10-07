@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click" popper-class="dropDownStyle">
     <div class="avatar">
-      <img src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" alt="avatar" />
+      <el-avatar :src="store.LoginUser.avatar ?? defaultImg" size="default" />
     </div>
     <template #dropdown>
       <el-dropdown-menu>
@@ -67,6 +67,7 @@ import type {UserVo} from "@/entity/vo";
 import {getUserById, updatePwd, updateUser} from "@/api/userController.ts";
 const router = useRouter();
 const store=useUserStore();
+const defaultImg=ref('https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg');
 const logout=()=>{
     store.$reset();
     router.replace({

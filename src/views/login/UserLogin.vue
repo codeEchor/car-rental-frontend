@@ -100,6 +100,7 @@ import {ElMessage} from "element-plus";
 import {useRouter} from "vue-router";
 import useUserStore from "@/stores/userStore.ts";
 import {emailLogin, generateEmailCode, getCode} from "@/api/userController.ts";
+import type {UserVo} from "@/entity/vo";
 
 const form = reactive<UserLoginDto>({
   username: '',
@@ -200,7 +201,6 @@ const timeout = () => {
 }
 // 处理登录
 const handleLogin = async () => {
-  console.log(loginType.value)
   if (loginType.value) {
     let username = form.username;
     if (username.length < 3) {
@@ -219,10 +219,20 @@ const handleLogin = async () => {
     }
     const res = await store.login(form);
     if (store.checkLogin) {
-      // 登录成功需要跳转到首页
-      await router.push({
-        path: '/'
-      })
+      console.log('登录用户信息',store.LoginUser)
+      // 根据用户的身份，如果是管理员则跳转到管理首页，如果是普通用户则跳转到前台页面
+      if (store.isAdmin())
+      {
+        // 管理员
+        await router.push({
+          path: '/'
+        })
+      }else {
+        await router.push({
+          path:'/front/home'
+        })
+      }
+
       ElMessage.success("登录成功");
     } else {
       // 登录失败
@@ -242,10 +252,17 @@ const handleLogin = async () => {
     //调用后端邮箱验证码登录的接口。
     const res = await store.loginByEmail(emailForm);
     if (store.checkLogin) {
-      // 登录成功需要跳转到首页
-      await router.push({
-        path: '/'
-      })
+      if (store.isAdmin())
+      {
+        await router.push({
+          path: '/'
+        })
+      }else {
+        await router.push({
+          path:'/front/home'
+        })
+      }
+
       ElMessage.success("登录成功");
     } else {
       // 登录失败

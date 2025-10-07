@@ -32,6 +32,10 @@ const useUserStore = defineStore('user', {
        },
         loginOut:function (){
            this.LoginUser= {};
+        },
+        isAdmin:function ()
+        {
+            return this.LoginUser.role?.some(item => item.id == 1) ?? false;
         }
     },
     persist:{

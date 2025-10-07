@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { useRoute ,useRouter} from "vue-router";
-import useMenuStore from "@/stores/menuStore";
+import useMenuStore from "@/stores/menuStore.ts";
 import { onMounted, ref,watch } from 'vue'
 import { ElMessage } from 'element-plus';
 const route = useRoute();

@@ -271,7 +271,7 @@ import {onMounted, reactive, ref} from "vue";
 import {Avatar, Delete, Plus} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage, type UploadRequestOptions} from "element-plus";
-import Pagination from "@/components/pagination/Pagination.vue";
+import Pagination from "@/components/admin/pagination/Pagination.vue";
 import {deleteCar, deleteCarBatch, insertCar, listCarPage, updateCar} from "@/api/carController.ts";
 import useFileUpload from "@/hooks/useFileUpload.ts";
 import {findAllBrand} from "@/api/brandController.ts";
@@ -285,7 +285,7 @@ import Category = API.Category;
 import City = API.City;
 import {findAllCity} from "@/api/cityController.ts";
 import {cloneDeep} from "lodash";
-import MyEditor from "@/components/editor/MyEditor.vue";
+import MyEditor from "@/components/admin/editor/MyEditor.vue";
 
 const addOrUpdateFormRef=ref();
 const addOrUpdateRules = reactive({
