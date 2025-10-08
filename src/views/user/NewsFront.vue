@@ -2,11 +2,20 @@
 import {onMounted, ref} from 'vue';
 import {ElButton, ElCard, ElCol, ElInput, ElRow} from 'element-plus';
 import {listPageNews} from '@/api/newsController';
-import Pagination from '@/components/admin/pagination/Pagination.vue';
+import {useRouter} from "vue-router";
 import News = API.News;
 import FrontNewsPageDto = API.FrontNewsPageDto;
 
-// 分页数据
+const router=useRouter();
+// 跳转到新闻详情页
+const toNewsDetail=(id:number=-1)=>{
+  router.push({
+    path:'/front/newsDetail',
+    query:{
+      id:id
+    }
+  })
+}
 // 分页对象
 const pageData = ref({
   total: 0,
@@ -54,10 +63,9 @@ const initNews=async (current:number)=>{
 onMounted(()=>{
    initNews(1);
 })
-const searchKeyword = ref('');
 // 搜索功能
 const handleSearch = () => {
-
+  initNews(pageData.value.pageNum);
 };
 
 </script>
@@ -67,7 +75,7 @@ const handleSearch = () => {
     <!-- 搜索栏 -->
     <div class="search-section">
       <el-input
-        v-model="searchKeyword"
+        v-model="forData.title"
         placeholder="请输入您感兴趣的标题搜索"
         class="search-input"
         clearable
@@ -83,7 +91,9 @@ const handleSearch = () => {
       <!-- 新闻列表 - 两列网格布局 -->
       <el-row :gutter="15">
         <el-col :span="12" v-for="news in newsList" :key="news.id">
-          <el-card class="news-card" shadow="never" :body-style="{ padding: '0' }">
+          <el-card class="news-card" shadow="never"
+                   @click="toNewsDetail(news.id)"
+                   :body-style="{ padding: '0' }">
             <div class="news-content">
               <div class="news-image">
                 <img :src="news.newImg" :alt="news.title" />

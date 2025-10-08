@@ -1,7 +1,5 @@
 <template>
-    <div>
-      <img src="../../../public/demo.jpg" style="height: 400px; width: 100%">
-    </div>
+    <h1>数据统计</h1>
 </template>
 
 <script setup lang="ts">

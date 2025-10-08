@@ -1,8 +1,22 @@
 declare namespace API {
+  type BaseResponseBoolean = {
+    code?: number;
+    message?: string;
+    data?: boolean;
+    description?: string;
+  };
+
   type BaseResponseBrand = {
     code?: number;
     message?: string;
     data?: Brand;
+    description?: string;
+  };
+
+  type BaseResponseCarDetailVo = {
+    code?: number;
+    message?: string;
+    data?: CarDetailVo;
     description?: string;
   };
 
@@ -274,6 +288,28 @@ declare namespace API {
     detail?: string;
   };
 
+  type CarDetailVo = {
+    id?: number;
+    carName?: string;
+    carImg?: string;
+    status?: number;
+    year?: number;
+    stock?: number;
+    price?: number;
+    color?: string;
+    favoritesNum?: number;
+    cityId?: number;
+    city?: City;
+    doorCount?: string;
+    seatCount?: string;
+    mileage?: string;
+    tankCapacity?: string;
+    displacement?: string;
+    fuelType?: string;
+    description?: string;
+    detail?: string;
+  };
+
   type CarPageDto = {
     carName?: string;
     brandId?: number;
@@ -401,6 +437,10 @@ declare namespace API {
     id: number;
   };
 
+  type deleteFavoritesByCidParams = {
+    id: number;
+  };
+
   type deleteFavoritesParams = {
     id: number;
   };
@@ -446,7 +486,6 @@ declare namespace API {
     description?: string;
     userId?: number;
     username?: string;
-    isDelete?: number;
     createTime?: string;
     updateTime?: string;
   };
@@ -483,7 +522,6 @@ declare namespace API {
     description?: string;
     userId?: number;
     username?: string;
-    isDelete?: number;
     createTime?: string;
     updateTime?: string;
     price?: number;
@@ -522,6 +560,10 @@ declare namespace API {
     id: number;
   };
 
+  type getCarDetailParams = {
+    carId: number;
+  };
+
   type getCategoryByIdParams = {
     id: number;
   };
@@ -547,6 +589,10 @@ declare namespace API {
   };
 
   type getNewsByIdParams = {
+    id: number;
+  };
+
+  type getNewsParams = {
     id: number;
   };
 
@@ -714,12 +760,28 @@ declare namespace API {
     remark?: string;
   };
 
+  type queryFavoritesByCidParams = {
+    id: number;
+  };
+
   type RentCarDto = {
     pageSize?: number;
     pageNum?: number;
     cityId?: number;
     brandId?: number;
     categoryId?: number;
+  };
+
+  type RentCarOrderDto = {
+    userId?: number;
+    carId?: number;
+    pickCarTime?: string;
+    turnCarTime?: string;
+    pickCarPhone?: string;
+    carName?: string;
+    carImg?: string;
+    username?: string;
+    userPhone?: string;
   };
 
   type RentCenterVo = {
@@ -871,6 +933,11 @@ declare namespace API {
     id: number;
   };
 
+  type updateStatusParams = {
+    id: number;
+    status: number;
+  };
+
   type updateUserParams = {
     id: number;
   };
@@ -925,6 +992,13 @@ declare namespace API {
   type UserUpdateRoleDto = {
     id?: number;
     roleList?: Role[];
+  };
+
+  type UserUpdateSelfDto = {
+    id?: number;
+    nickName?: string;
+    phone?: string;
+    email?: string;
   };
 
   type UserVo = {

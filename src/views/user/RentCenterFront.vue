@@ -11,7 +11,7 @@ import Category = API.Category;
 import {findAllCategory} from "@/api/categoryController.ts";
 import Brand = API.Brand;
 import {findAllBrand} from "@/api/brandController.ts";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 // 路由对象
 const router=useRouter();
 // 分页数据
@@ -39,8 +39,6 @@ const handleSizeChange=(val:number)=>{
   // 重新加载数据
   initCars(pageData.value.pageNum);
 }
-// 分页大小数组
-const pageSizeArr = [3, 5, 7, 10];
 const formData=ref<RentCarDto>({})
 const cars=ref<RentCenterVo[]>([]);
 const initCars=async (current:number)=>{
@@ -96,8 +94,10 @@ const doSelectCategory= (id:number=-1)=>{
   selectedType.value=id;
   initCars(pageData.value.pageNum);
 }
+// 当前路由实例
+const route=useRoute();
 // 被选择的品牌
-const selectBrand=ref(-1);
+const selectBrand=ref( -1);
 // 品牌集合
 const brandList=ref<Brand[]>([]);
 // 查询所有的汽车类型
@@ -124,9 +124,9 @@ function resetQuery() {
 // 点击汽车详情
 const handleClick=(id:number)=>{
   router.push({
-    path:'/front/rent/carDetail',
+    path:'/front/carDetail',
     query:{
-      id:1
+      id:id
     }
   })
 }
@@ -135,6 +135,10 @@ onMounted(()=>{
   getAllCity();
   getAllCategory();
   getAllBrand();
+  if (route.query.brandId)
+  {
+   doSelectBrand(Number(route.query.brandId));
+  }
 })
 </script>
 
@@ -195,15 +199,15 @@ onMounted(()=>{
     <!-- 汽车列表 - 使用Element Plus的Card组件循环渲染 -->
     <div class="car-list">
       <el-row :gutter="20">
+<!--        汽车列表 - 修改为与照片一致的样式-->
         <el-col :span="24">
           <el-card
             v-for="car in cars"
             :key="car.id"
             class="car-card"
             shadow="hover"
-            @click="handleClick(car.id)"
-            body-class="car-content"
-            :body-style="{ padding: '0', }"
+            @click="handleClick(car.id as number)"
+            :body-style="{ padding: '0' }"
           >
             <div class="car-content">
               <div class="car-image">
@@ -213,10 +217,10 @@ onMounted(()=>{
                 <h3 class="car-name">{{ car.carName }}</h3>
                 <p class="car-description">{{ car.description }}</p>
                 <div class="car-tags">
-                  <el-tag type="primary" size="small" style="margin-right: 4px;">{{car.seatCount}}</el-tag>
-                  <el-tag type="success" size="small" style="margin-right: 4px;">{{car.displacement}}</el-tag>
-                  <el-tag type="info" size="small" style="margin-right: 4px;">{{car.fuel_type}}</el-tag>
-                  <el-tag type="warning" size="small">{{car.color}}</el-tag>
+                  <el-tag type="primary" size="small" style="margin-right: 4px; background-color: #e6f7ff; color: #1890ff; border-color: #91d5ff;">{{car.seatCount}}</el-tag>
+                  <el-tag type="success" size="small" style="margin-right: 4px; background-color: #f6ffed; color: #52c41a; border-color: #b7eb8f;">{{car.displacement}}</el-tag>
+                  <el-tag type="info" size="small" style="margin-right: 4px; background-color: #f0f2f5; color: #1890ff; border-color: #d9d9d9;">{{car.fuel_type}}</el-tag>
+                  <el-tag type="warning" size="small" style="background-color: #fff7e6; color: #fa8c16; border-color: #ffd591;">{{car.color}}</el-tag>
                 </div>
                 <div class="car-price">
                   ¥ {{ car.price }}/天
@@ -225,6 +229,7 @@ onMounted(()=>{
             </div>
           </el-card>
         </el-col>
+<!--        分页组件-->
         <el-col :span="24">
           <el-pagination
               style="margin-top: 30px; margin-left: 460px;  "
@@ -246,7 +251,7 @@ onMounted(()=>{
       </el-row>
     </div>
     
- 
+  
   </div>
 </template>
 
@@ -369,66 +374,78 @@ onMounted(()=>{
   padding: 0;
 }
 
-/* 汽车列表、分页等其他样式保持不变 */
+/* 汽车列表样式 - 根据照片调整 */
 .car-list {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0;
   margin-bottom: 20px;
 }
-.car-content:hover {
-  cursor: pointer;
-}
-.car-item {
-  display: flex;
-  border: 1px solid #e4e7ed;
-  border-radius: 8px;
+
+.car-card {
+  margin-bottom: 16px;
+  border-radius: 4px;
   overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.car-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.car-content {
+  display: flex;
+  padding: 16px;
+  cursor: pointer;
 }
 
 .car-image {
-  width: 200px;
-  height: 150px;
+  width: 180px;
+  height: 130px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .car-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 4px;
 }
 
 .car-info {
-  padding: 20px;
+  padding-left: 16px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .car-name {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-size: 18px;
   font-weight: 600;
+  color: #1890ff; /* 根据照片，标题使用蓝色 */
 }
 
 .car-description {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   color: #606266;
-  line-height: 1.5;
+  line-height: 1.4;
+  font-size: 14px;
+  flex: 1;
 }
 
 .car-tags {
-  margin-bottom: 15px;
-}
-
-.car-tags .el-tag {
-  margin-right: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .car-price {
   font-size: 18px;
   font-weight: 600;
-  color: #ff6600;
+  color: #ff4d4f; /* 根据照片，价格使用红色 */
+  margin-top: auto;
 }
 
 /* 分页 */
@@ -461,7 +478,14 @@ onMounted(()=>{
     align-items: center;
     justify-content: center;
   }
-  
+:deep(.el-pagination button)
+{
+  background-color: rgb(240, 241, 243)
+}
+:deep(.el-pagination)
+{
+  --el-pagination-bg-color:rgb(240, 241, 243)
+}
   .el-pagination__prev.is-disabled,
   .el-pagination__next.is-disabled {
     color: #c0c4cc;

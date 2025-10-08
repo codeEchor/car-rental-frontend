@@ -2,6 +2,21 @@
 /* eslint-disable */
 import request from "@/axios/request";
 
+/** 用户更新信息的接口 POST /front/user/update */
+export async function updateUserBySelf(
+  body: API.UserUpdateSelfDto,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseObject>("/front/user/update", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 查询用户接口 GET /user/${param0} */
 export async function getUserById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

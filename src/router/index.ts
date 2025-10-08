@@ -21,6 +21,7 @@ import FavoritesFront from "@/views/user/FavoritesFront.vue";
 import UserInfo from "@/views/user/UserInfo.vue";
 import PwdChangeFront from "@/views/user/PwdChangeFront.vue";
 import CarDetail from "@/views/user/CarDetail.vue";
+import NewInfoFront from "@/views/user/NewInfoFront.vue";
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -76,14 +77,15 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: '/index/order',
-                    name: 'order',
+                    path: '/index/orders',
+                    name: 'orders',
                     component: OrderIndex,
                     meta: {
                         title: '订单管理',
                         icon: 'GoodsFilled',
                     },
                 },
+
                 {
                     path: '/index/new',
                     name: 'new',
@@ -94,8 +96,8 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: '/index/favorites',
-                    name: 'favorites',
+                    path: '/index/favorite',
+                    name: 'favorite',
                     component: FavoritesIndex,
                     meta: {
                         title: '收藏管理',
@@ -225,37 +227,42 @@ const router = createRouter({
             component: PwdChangeFront,
         },
         {
-            path: `/front/rent/carDetail:id=${1}`,
+            path: `/front/carDetail`,
             name: 'carDetail',
             component: CarDetail,
+        },
+        {
+            path: `/front/newsDetail`,
+            name: 'newsDetail',
+            component: NewInfoFront,
         },
     ],
 })
 // 配置路由拦截器
-// router.beforeEach((to, from, next)=>{
-//     const store=useUserStore();
-//     if (to.path=='/user/login' || to.path=='/user/register')
-//     {
-//         // 放行
-//         next();
-//     }
-//     else {
-//         // 校验用户是否登录
-//         if (!store.checkLogin)
-//         {
-//             // 没有登录跳转到登录页
-//             next('/user/login');
-//         }
-//         // 如果当前用户是普通用户，访问 / 则跳转到/front
-//         if(!store.isAdmin())
-//         {
-//             if(to.path=='/index/home')
-//             {
-//                 next('/front/home');
-//             }
-//         }
-//         // 放行
-//         next();
-//     }
-// })
+router.beforeEach((to, from, next)=>{
+    const store=useUserStore();
+    if (to.path=='/user/login' || to.path=='/user/register')
+    {
+        // 放行
+        next();
+    }
+    else {
+        // 校验用户是否登录
+        if (!store.checkLogin)
+        {
+            // 没有登录跳转到登录页
+            next('/user/login');
+        }
+        // 如果当前用户是普通用户，访问 / 则跳转到/front
+        if(!store.isAdmin())
+        {
+            if(to.path=='/index/home')
+            {
+                next('/front/home');
+            }
+        }
+        // 放行
+        next();
+    }
+})
 export default router

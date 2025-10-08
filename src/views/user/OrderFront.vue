@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { ElInput, ElSelect, ElButton, ElTable, ElTableColumn, ElTag, ElImage, ElMessage } from 'element-plus'
+import {
+  ElInput,
+  ElSelect,
+  ElButton,
+  ElTable,
+  ElTableColumn,
+  ElTag,
+  ElImage,
+  ElMessage,
+  ElMessageBox
+} from 'element-plus'
 import type { Order, OrderPageDto } from '@/api/typings'
-import {getOrderByName, listPageOrders, updateToDeparture, updateToException} from '@/api/orderController'
+import {getOrderByName, listPageOrders, updateStatus, updateToDeparture, updateToException} from '@/api/orderController'
 import Pagination from '@/components/admin/pagination/Pagination.vue'
 import FrontOrderPageDto = API.FrontOrderPageDto;
-// 响应式数据
-const carName = ref('')
-const orderStatus = ref('');
+
 // 订单数据
 const orderList = ref<Order[]>([]);
 // 表单数据
@@ -56,15 +64,14 @@ const handleSizeChange=(val:number)=>{
   initOrders(pageData.value.pageNum);
 }
 
-// 订单状态映射
+// 订单状态映射  订单的状态 0--待发车， 1--待取车，2--已取车，3--完成 4--订单取消  5--订单异常
 const statusMap:Record<number, { label:string,type:'primary' |'success' | 'warning' | 'danger' | 'info'}> = {
   0: { label: '待发车', type: 'primary' },
-  1: { label: '发车', type: 'success' },
-  2: { label: '待取车', type: 'warning' },
-  3: { label: '已取车', type: 'success' },
-  4: { label: '完成', type: 'success' },
-  5: { label: '订单取消', type: 'danger' },
-  6: { label: '订单异常', type: 'warning' }
+  1: { label: '待取车', type: 'success' },
+  2: { label: '已取车', type: 'success' },
+  3: { label: '完成', type: 'success' },
+  4: { label: '订单取消', type: 'danger' },
+  5: { label: '订单异常', type: 'warning' }
 }
 
 // 搜索订单
@@ -79,39 +86,101 @@ const handleReset = () => {
 }
 
 // 处理订单操作
-const handleOrderAction = async (orderId: number, action: 'departure' | 'exception' | 'cancel') => {
+const handleOrderAction = async (orderId: number, action: 'pickCar' | 'turnCar' | 'cancel') => {
   try {
-    if (action === 'departure') {
-      await updateToDeparture({ id: orderId })
-      ElMessage.success('发车成功')
-    } else if (action === 'exception') {
-      await updateToException({ id: orderId, remark: '订单异常' })
-      ElMessage.success('已标记为异常订单')
+    if (action === 'pickCar') {
+      ElMessageBox.confirm(
+          '确定取车?',
+          '取车确认',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+      )
+          .then(async () => {
+          const res= await updateStatus({
+              id:orderId,
+              status: 1
+            })
+            if (res.data.code==2000)
+            {
+              ElMessage.success('取车成功');
+              await initOrders(pageData.value.pageNum);
+            }else {
+              ElMessage.error(res.data.description);
+            }
+          })
+          .catch(() => {
+            ElMessage({
+              type: 'info',
+              message: '已取消',
+            })
+          })
+
+    } else if (action === 'turnCar') {
+      ElMessageBox.confirm(
+          '确定还车?',
+          '还车确认',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+      )
+          .then(async () => {
+            const res=await updateStatus({
+              id:orderId,
+              status: 2
+            })
+            if (res.data.code==2000)
+            {
+              ElMessage.success('还车成功');
+              await initOrders(pageData.value.pageNum);
+            }else {
+              ElMessage.error(res.data.description);
+            }
+          })
+          .catch(() => {
+            ElMessage({
+              type: 'info',
+              message: '已取消',
+            })
+          })
+
     } else if (action === 'cancel') {
-      // 取消订单的逻辑
-      ElMessage.success('订单已取消')
+      ElMessageBox.confirm(
+          '确定取消?',
+          '取消订单确认',
+          {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+      )
+          .then(async () => {
+            // 取消订单的逻辑
+            const res=await updateStatus({
+              id:orderId,
+              status:4
+            });
+            if (res.data.code==2000)
+            {
+              ElMessage.success('订单已取消');
+              await initOrders(pageData.value.pageNum);
+            }else {
+              ElMessage.error(res.data.description);
+            }
+          })
+          .catch(() => {
+            ElMessage({
+              type: 'info',
+              message: '已取消',
+            })
+          })
     }
-   // fetchOrderList(pageData.value.pageNum)
   } catch (error) {
     console.error('操作订单失败:', error)
-    // 在模拟环境中直接更新本地数据
-    const orderIndex = orderList.value.findIndex(order => order.id === orderId)
-    if (orderIndex !== -1) {
-      if (action === 'departure') {
-        orderList.value[orderIndex].status = 0
-        ElMessage.success('发车成功')
-      } else if (action === 'exception') {
-        orderList.value[orderIndex].status = 3
-        ElMessage.success('已标记为异常订单')
-      } else if (action === 'cancel') {
-        orderList.value[orderIndex].status = 1
-        ElMessage.success('订单已取消')
-      }
-      // 触发视图更新
-      orderList.value = [...orderList.value]
-    } else {
-      ElMessage.error('操作失败，请重试')
-    }
   }
 }
 
@@ -135,12 +204,11 @@ const handleOrderAction = async (orderId: number, action: 'departure' | 'excepti
         style="width: 200px; margin-right: 10px;"
       >
         <el-option label="待发车" value="0" />
-        <el-option label="发车" value="1" />
-        <el-option label="待取车" value="2" />
-        <el-option label="已取车" value="3" />
-        <el-option label="完成" value="4" />
-        <el-option label="订单取消" value="5" />
-        <el-option label="订单异常" value="6" />
+        <el-option label="待取车" value="1" />
+        <el-option label="已取车" value="2" />
+        <el-option label="完成" value="3" />
+        <el-option label="订单取消" value="4" />
+        <el-option label="订单异常" value="5" />
       </el-select>
       <el-button type="primary" @click="handleSearch">查询</el-button>
       <el-button @click="handleReset" style="margin-left: 10px;">重置</el-button>
@@ -182,20 +250,30 @@ const handleOrderAction = async (orderId: number, action: 'departure' | 'excepti
         <template #default="scope">
           <el-button
             v-if="scope.row.status === 0"
-            type="primary"
-            size="small"
-            @click="handleOrderAction(scope.row.id, 'departure')"
-          >
-            发车
-          </el-button>
-          <el-button
-            v-if="scope.row.status === 0"
             type="danger"
             size="small"
             style="margin-left: 5px;"
             @click="handleOrderAction(scope.row.id, 'cancel')"
           >
             取消
+          </el-button>
+          <el-button
+              v-else-if="scope.row.status === 1"
+              type="success"
+              size="small"
+              style="margin-left: 5px;"
+              @click="handleOrderAction(scope.row.id, 'pickCar')"
+          >
+            取车
+          </el-button>
+          <el-button
+              v-else-if="scope.row.status === 2"
+              type="success"
+              size="small"
+              style="margin-left: 5px;"
+              @click="handleOrderAction(scope.row.id, 'turnCar')"
+          >
+            还车
           </el-button>
         </template>
       </el-table-column>
@@ -204,7 +282,7 @@ const handleOrderAction = async (orderId: number, action: 'departure' | 'excepti
     <!-- 分页 -->
     <div>
       <el-pagination
-          style="margin-top: 30px; margin-left: 460px;"
+          style="margin-top: 30px; margin-left: 40%;"
           :current-page="pageData.pageNum"
           :page-size="pageData.pageSize"
           size="default"

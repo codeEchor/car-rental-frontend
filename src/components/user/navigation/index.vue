@@ -102,8 +102,8 @@ const handleUpdate = () => {
 
       <el-dropdown>
             <span class="avatar-wrapper">
-              <el-avatar style="width: 40px; height: 40px;">张</el-avatar>
-              <span class="user-name">张三</span>
+              <el-avatar style="width: 40px; height: 40px;" :src="store.LoginUser.avatar"></el-avatar>
+              <span class="user-name">{{store.LoginUser.username ?? 'wang'}}</span>
               <el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </span>
         <template #dropdown>

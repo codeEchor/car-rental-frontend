@@ -17,10 +17,11 @@ const menuStore = useMenuStore();
 const taggle = () => {
   menuStore.setCollapse();
 };
-
 const store=useUserStore();
 const route = useRoute();
 watch(route,(to,from)=>{
+  console.log('to',to);
+  console.log('from',from);
    const {path,meta,query,params,fullPath}=to;
    menuStore.setTagList({
     path,
@@ -40,9 +41,9 @@ watch(()=>route.path,(newVal)=>{
 const MenuData=ref<Menus[]>([]);
 onMounted(async ()=>{
   // 加载菜单数据
-  // todo：后续需要改成成store中获取登录用户的名字，动态加载菜单
+  //
   const res=await listByUsername({
-    username:store.LoginUser.username || 'admin'
+    username:store.LoginUser.username || ''
   });
   if(res.data.code==2000)
   {
