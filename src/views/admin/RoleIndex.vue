@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
+import {nextTick, onMounted, reactive, ref} from "vue";
 import {
   deleteRole,
   deleteRoleBatch,
@@ -130,6 +130,13 @@ const defaultProps = {
 // 处理关闭菜单分配的弹框
 const handleClose=()=>{
   AssignMenu.value.visible=false;
+  // 清理选中状态
+  if (treeRef.value) {
+    treeRef.value.setCheckedKeys([]);
+  }
+  // 重置数据
+  AssignMenu.value.defaultKey = [];
+  AssignMenu.value.id = -1;
 }
 // 进行菜单分配
 const doAssign=async ()=>{
@@ -139,6 +146,7 @@ const doAssign=async ()=>{
    const halfKey=treeRef.value.getHalfCheckedKeys();
    // 获取所有被选中的key
    let ids = checkedKey.concat(halfKey);
+  console.log('所有被选中的菜单id',ids);
    // 更新角色菜单表
    const  res=await updateRoleMenus({
      id:AssignMenu.value.id
@@ -149,6 +157,8 @@ const doAssign=async ()=>{
       // 刷新页面
       location.reload();
       AssignMenu.value.visible=false;
+   }else {
+      ElMessage.error(res.data.description);
    }
   if (treeRef.value) {
     treeRef.value.setCheckedKeys(AssignMenu.value.defaultKey)
@@ -158,11 +168,10 @@ const doAssign=async ()=>{
 const treeRef=ref();
 // 打开分配菜单的弹框
 const openMenusAssign=async (role:Role)=>{
-  AssignMenu.value.visible=true;
   // 重置数据
-  AssignMenu.value.defaultKey.length=0;
+  AssignMenu.value.defaultKey=[];
   // 记录角色的id
-  AssignMenu.value.id=role.id ?? 1;
+  AssignMenu.value.id=role.id ?? -1;
   // 查询所有的菜单
   const res=await getAllMenus();
   if(res.data.code==2000)
@@ -176,16 +185,22 @@ const openMenusAssign=async (role:Role)=>{
   if(data.data)
   {
     data.data.map(m=>{
-      if(m.pid==0)  AssignMenu.value.defaultKey.push(m.id ?? 0)
-      if(m.children)
-        m.children.map(ch=>{
-          AssignMenu.value.defaultKey.push(ch.id ?? 0)
-        })
-    })
+        if (m.children!.length==0)
+        {
+          AssignMenu.value.defaultKey.push(m.id as number);
+        }else {
+          m.children!.map(ch=>{
+            AssignMenu.value.defaultKey.push(ch.id as number)
+          })
+        }
+
+    });
   }
+  AssignMenu.value.visible=true;
   if (treeRef.value) {
-    treeRef.value.setCheckedKeys(AssignMenu.value.defaultKey)
+    treeRef.value.setCheckedKeys(AssignMenu.value.defaultKey);
   }
+
 }
 // 分配菜单弹框对象
 const AssignMenu=ref({

@@ -30,7 +30,6 @@ onMounted(() => {
     activeNavItem.value = route.path;
   }
 });
-
 // 当导航项改变时，保存到localStorage
 const handleMenuSelect = (index: string) => {
   activeNavItem.value = index;
@@ -96,9 +95,9 @@ const handleUpdate = () => {
       </el-menu-item>
     </el-menu>
     <div class="user-menu">
-      <el-badge :value="4" class="message-badge">
-        <el-button type="text" icon="Message" circle></el-button>
-      </el-badge>
+<!--      <el-badge :value="4" class="message-badge">-->
+<!--        <el-button type="text" icon="Message" circle></el-button>-->
+<!--      </el-badge>-->
 
       <el-dropdown>
             <span class="avatar-wrapper">

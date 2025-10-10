@@ -135,9 +135,15 @@ const gotoLogin=()=>{
       <div class="register-btn">
         <el-button  class="loginBtn" type="primary"
                     @click="handleRegister"
-                    style="width:120px;letter-spacing: 0.2em;height: 45px;">注册</el-button>
+                    style="width:120px;letter-spacing: 0.2em;height: 45px;
+                    border-color:#409EFF;
+                   color: white;
+                   background-color: #409EFF;">注册</el-button>
         <el-button @click="gotoLogin" class="loginBtn" type="primary"
-                   style="width:120px;letter-spacing: 0.2em;height: 45px;">去登录</el-button>
+                   style="width:120px;letter-spacing: 0.2em;height: 45px;
+                    border-color:#409EFF;
+                   color: white;
+                   background-color: #409EFF;">去登录</el-button>
       </div>
     </el-form>
   </el-card>
@@ -169,6 +175,7 @@ body {
 .login-title {
   font-size: 24px;
   font-weight: bold;
+  text-align: center;
   color: #303133;
   margin-bottom: 10px;
 }

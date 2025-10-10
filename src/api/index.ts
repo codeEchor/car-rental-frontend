@@ -13,6 +13,7 @@ import * as carController from "./carController";
 import * as brandController from "./brandController";
 import * as orderController from "./orderController";
 import * as fileUploadController from "./fileUploadController";
+import * as staticsController from "./staticsController";
 import * as carDetailController from "./carDetailController";
 export default {
   userController,
@@ -26,5 +27,6 @@ export default {
   brandController,
   orderController,
   fileUploadController,
+  staticsController,
   carDetailController,
 };

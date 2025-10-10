@@ -2,6 +2,21 @@
 /* eslint-disable */
 import request from "@/axios/request";
 
+/** 用户充值的接口 POST /front/user/money */
+export async function userUpdateMoney(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.userUpdateMoneyParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseObject>("/front/user/money", {
+    method: "POST",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 用户更新信息的接口 POST /front/user/update */
 export async function updateUserBySelf(
   body: API.UserUpdateSelfDto,

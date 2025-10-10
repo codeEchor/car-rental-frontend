@@ -41,10 +41,16 @@
       <div class="register-btn">
         <el-button class="loginBtn" type="primary"
                    @click="handleLogin"
-                   style="width:120px;letter-spacing: 0.2em;height: 45px;">登录
+                   style="width:120px;letter-spacing: 0.2em;height: 45px;
+  border-color:#409EFF;
+                   color: white;
+                   background-color: #409EFF;">登录
         </el-button>
         <el-button @click="gotoRegister" class="loginBtn" type="primary"
-                   style="width:120px;letter-spacing: 0.2em;height: 45px;">注册
+                   style="width:120px;letter-spacing: 0.2em;height: 45px;
+  border-color:#409EFF;
+                   color: white;
+                   background-color: #409EFF;">注册
         </el-button>
       </div>
     </el-form>
@@ -78,10 +84,16 @@
       <div class="register-btn">
         <el-button class="loginBtn" type="primary"
                    @click="handleLogin"
-                   style="width:120px;letter-spacing: 0.2em;height: 45px;">登录
+                   style="width:120px;letter-spacing: 0.2em;height: 45px;
+                   border-color:#409EFF;
+                   color: white;
+                   background-color: #409EFF;">登录
         </el-button>
         <el-button @click="gotoRegister" class="loginBtn" type="primary"
-                   style="width:120px;letter-spacing: 0.2em;height: 45px;">注册
+                   style="width:120px;letter-spacing: 0.2em;height: 45px;
+                   border-color:#409EFF;
+                   color: white;
+                   background-color: #409EFF;">注册
         </el-button>
       </div>
     </el-form>
@@ -99,8 +111,7 @@ import type {UserLoginDto} from "@/entity/dto/userDto";
 import {ElMessage} from "element-plus";
 import {useRouter} from "vue-router";
 import useUserStore from "@/stores/userStore.ts";
-import {emailLogin, generateEmailCode, getCode} from "@/api/userController.ts";
-import type {UserVo} from "@/entity/vo";
+import {generateEmailCode, getCode} from "@/api/userController.ts";
 
 const form = reactive<UserLoginDto>({
   username: '',
@@ -271,7 +282,6 @@ const handleLogin = async () => {
   }
 }
 
-
 // 处理重置
 const handleReset = () => {
   formRef.value.resetFields();
@@ -289,6 +299,9 @@ onMounted(() => {
 </script>
 <style scoped>
 .loginType {
+  display: flex;
+  margin-bottom: 20px;
+  margin-left: 40px;
   color: rgba(38, 38, 38, 0.75);
   font-size: 14px;
   line-height: 22px;
@@ -319,6 +332,7 @@ body {
 }
 
 .login-title {
+  text-align: center;
   font-size: 24px;
   font-weight: bold;
   color: #303133;
@@ -326,6 +340,7 @@ body {
 }
 
 .login-subtitle {
+  margin-left: 40px;
   color: #909399;
   margin-bottom: 10px;
   font-size: 14px;

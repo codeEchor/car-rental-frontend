@@ -232,6 +232,7 @@ const handleOrderAction = async (orderId: number, action: 'pickCar' | 'turnCar' 
         </template>
       </el-table-column>
       <el-table-column prop="pickCarTime" label="取车时间" width="140" />
+      <el-table-column prop="realPickTime" label="实际取车时间" width="140"/>
       <el-table-column prop="turnCarTime" label="还车时间" width="140" />
       <el-table-column prop="realTurnTime" label="实际还车时间" width="140" />
       <el-table-column prop="status" label="订单状态" width="100">

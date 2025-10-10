@@ -18,7 +18,7 @@ import {ref, watch} from "vue";
     (e: 'handleCurrentChange',value:number): void
     (e:'handleSizeChange',value:any) :void
   }>()
-  const localPageSize=ref(3);
+  const localPageSize=ref(5);
   watch(()=>prop.pageSize,(newPageSize:number)=>{
       localPageSize.value=newPageSize;
   })

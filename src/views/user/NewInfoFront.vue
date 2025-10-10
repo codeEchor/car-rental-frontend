@@ -23,10 +23,10 @@ onMounted(()=>{
 <template>
    <el-card class="news-Container" style="">
         <div class="title-header">
-          <h1 style="margin-bottom: 10px;">{{newsDetail.title}}</h1>
+          <h1 style="margin:10px auto ">{{newsDetail.title}}</h1>
           <span>{{newsDetail.createTime}}</span>
         </div>
-        <div v-html="newsDetail.content" ></div>
+        <div v-html="newsDetail.content" style="padding: 1px 40px 40px;"></div>
    </el-card>
 </template>
 
@@ -38,6 +38,5 @@ onMounted(()=>{
 }
 .title-header {
   text-align: center;
-  margin-bottom: 40px;
 }
 </style>

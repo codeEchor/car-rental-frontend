@@ -310,7 +310,6 @@ const addOrUpdateRules = reactive({
   ],
   stock: [
     { required: true, message: '请输入剩余数量', trigger: 'blur' },
-    { min: 1, message: '汽车数量不能低于1', trigger: 'blur' }
   ],
 });
 // 车型props

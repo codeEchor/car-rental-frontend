@@ -19,12 +19,13 @@
       <el-table-column prop="userPhone" label="客户电话" width="100" align="center"/>
       <el-table-column prop="carName" label="车辆名称" width="100" align="center"/>
       <el-table-column prop="pickCarTime" label="取车时间" width="100" align="center"/>
+      <el-table-column prop="realPickTime" label="实际取车时间" width="100" align="center"/>
       <el-table-column prop="turnCarTime" label="还车时间" width="100" align="center"/>
       <el-table-column prop="realTurnTime" label="实际还车时间" width="100" align="center"/>
       <el-table-column prop="pickCarLocation" label="取车地址" width="100" align="center"/>
       <el-table-column prop="pickCarPhone" label="取车联系电话" width="100" align="center"/>
       <el-table-column prop="amount" label="租车总价" width="100" align="center"/>
-      <el-table-column prop="renderDay" label="租车时间" width="100" align="center"/>
+      <el-table-column prop="renderDay" label="租赁天数" width="100" align="center"/>
       <el-table-column prop="status" label="订单状态" width="100" align="center">
             <template #default="scope">
               <el-tag :type="statusMap[scope.row.status]?.type || 'info'">
@@ -115,6 +116,7 @@ import Order = API.Order;
 import OrderPageDto = API.OrderPageDto;
 import OrderToException = API.OrderToException;
 import OrderToDepartureDto = API.OrderToDepartureDto;
+import useUserStore from "@/stores/userStore.ts";
 const handleCancel2=()=>{
   pickCarDialog.value.visible=false;
   pickCarDialog.value.orderToDepartureDto={};
@@ -134,7 +136,7 @@ const handlePickCar=async ()=>{
     pickCarDialog.value.orderToDepartureDto={};
     await initData(pageData.value.pageNum);
   }else {
-    ElMessage.success(res.data.description);
+    ElMessage.error(res.data.description);
   }
 }
 // 打开发车的弹框

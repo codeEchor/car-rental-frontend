@@ -118,6 +118,20 @@ declare namespace API {
     description?: string;
   };
 
+  type BaseResponseListSalesByBrandVo = {
+    code?: number;
+    message?: string;
+    data?: SalesByBrandVo[];
+    description?: string;
+  };
+
+  type BaseResponseListSalesByOrderVo = {
+    code?: number;
+    message?: string;
+    data?: SalesByOrderVo[];
+    description?: string;
+  };
+
   type BaseResponseMapStringObject = {
     code?: number;
     message?: string;
@@ -897,6 +911,16 @@ declare namespace API {
     remark?: string;
   };
 
+  type SalesByBrandVo = {
+    brandName?: string;
+    carSales?: number;
+  };
+
+  type SalesByOrderVo = {
+    day?: string;
+    orderCount?: number;
+  };
+
   type updateBrandParams = {
     id: number;
   };
@@ -983,6 +1007,11 @@ declare namespace API {
     money?: number;
   };
 
+  type userUpdateMoneyParams = {
+    id: number;
+    money: number;
+  };
+
   type UserUpdatePwdDto = {
     id?: number;
     password?: string;
@@ -999,6 +1028,7 @@ declare namespace API {
     nickName?: string;
     phone?: string;
     email?: string;
+    avatar?: string;
   };
 
   type UserVo = {

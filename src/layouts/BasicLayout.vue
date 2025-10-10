@@ -12,6 +12,8 @@ import Footer from '@/components/admin/footer/Footer.vue'
 import {listByUsername} from "@/api/menusController.ts";
 import type {Menus} from "@/entity/domain";
 import useUserStore from "@/stores/userStore.ts";
+import {ElNotification} from "element-plus";
+import useConnectWebSocket from "@/hooks/useConnectWebSocket.ts";
 
 const menuStore = useMenuStore();
 const taggle = () => {
@@ -32,8 +34,9 @@ watch(route,(to,from)=>{
     title:meta.title,
     icon:meta.icon,
    })
-})
+},{immediate:true})
 const defaultActive=ref('');
+const {connectWebSocket}=useConnectWebSocket();
 // 监听默认选中菜单
 watch(()=>route.path,(newVal)=>{
     defaultActive.value=newVal;
@@ -41,7 +44,6 @@ watch(()=>route.path,(newVal)=>{
 const MenuData=ref<Menus[]>([]);
 onMounted(async ()=>{
   // 加载菜单数据
-  //
   const res=await listByUsername({
     username:store.LoginUser.username || ''
   });
@@ -49,6 +51,10 @@ onMounted(async ()=>{
   {
     MenuData.value=res.data.data as Menus[];
     console.log('加载的菜单数据：',MenuData.value);
+  }
+  if (store.isAdmin())
+  {
+    connectWebSocket();
   }
 })
 </script>

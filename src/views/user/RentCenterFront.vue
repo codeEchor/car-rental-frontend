@@ -12,6 +12,7 @@ import {findAllCategory} from "@/api/categoryController.ts";
 import Brand = API.Brand;
 import {findAllBrand} from "@/api/brandController.ts";
 import {useRoute, useRouter} from "vue-router";
+import useUserStore from "@/stores/userStore.ts";
 // 路由对象
 const router=useRouter();
 // 分页数据
@@ -110,6 +111,7 @@ const getAllBrand=async ()=>{
 }
 // 根据选中的品牌进行查询
 const doSelectBrand=(id:number=-1)=>{
+  console.log('点击',id);
    formData.value.brandId=id;
    selectBrand.value=id;
    initCars(pageData.value.pageNum);
@@ -130,14 +132,19 @@ const handleClick=(id:number)=>{
     }
   })
 }
+const store=useUserStore();
 onMounted(()=>{
-  initCars(1);
+
+
   getAllCity();
   getAllCategory();
   getAllBrand();
   if (route.query.brandId)
   {
-   doSelectBrand(Number(route.query.brandId));
+   // console.log('来到租车中心',route.query.brandId)
+    doSelectBrand(Number(route.query.brandId));
+  }else {
+    initCars(1);
   }
 })
 </script>

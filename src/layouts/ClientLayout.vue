@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import Navigation from '../components/user/navigation/index.vue'
 import Footer from '../components/user/footer/index.vue'
+import {onMounted} from "vue";
+import useUserStore from "@/stores/userStore.ts";
+import {ElNotification} from "element-plus";
+const store=useUserStore();
+onMounted(()=>{
+})
 </script>
 <template>
   <div class="client-layout">

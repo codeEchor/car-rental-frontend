@@ -127,19 +127,20 @@
 
 <script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
-import {Avatar, Delete, Menu, Plus} from "@element-plus/icons-vue";
+import {Avatar, Delete, Plus} from "@element-plus/icons-vue";
 import {useRouter} from "vue-router";
 import {ElMessage, type UploadRequestOptions} from "element-plus";
 import Pagination from "@/components/admin/pagination/Pagination.vue";
 import {deleteNews, deleteNewsBatch, insertNews, listNewsPage, updateNews} from "@/api/newsController.ts";
-import News = API.News;
-import NewsAddDto = API.NewsAddDto;
-import NewsUpdateDto = API.NewsUpdateDto;
-import NewsPageDto = API.NewsPageDto;
 import useFileUpload from "@/hooks/useFileUpload.ts";
 import MyEditor from "@/components/admin/editor/MyEditor.vue";
 import useUserStore from "@/stores/userStore.ts";
 import {cloneDeep} from "lodash";
+import News = API.News;
+import NewsAddDto = API.NewsAddDto;
+import NewsUpdateDto = API.NewsUpdateDto;
+import NewsPageDto = API.NewsPageDto;
+
 const addOrUpdateFormRef=ref();
 const store=useUserStore();
 const addOrUpdateRules = reactive({
@@ -165,6 +166,8 @@ let newContent='';
 // 接收子组件修改后的新闻内容
 const receive=(value:string)=>{
   newContent=value;
+  newsDialog.value.newsAddDto.content=newContent;
+
 }
 // 打开查看新闻详情的弹框
 const showContentDialog=(content:string)=>{
@@ -175,9 +178,7 @@ const showContentDialog=(content:string)=>{
 // 照片上传
 const {handleHttpUpload}=useFileUpload();
 const BeforehandleHttpUpload=async (options: UploadRequestOptions)=>{
-  const res=await handleHttpUpload(options);
-  //formData.newsImg=res;
-  newsDialog.value.newsAddDto.newImg= res;
+  newsDialog.value.newsAddDto.newImg= await handleHttpUpload(options);
 }
 // 删除新闻
 const deleteByIdNews=async (id:number)=>{
@@ -250,10 +251,10 @@ const handleSave = async () => {
     {
       console.log('新闻新增对象', newsDialog.value.newsAddDto);
       // 执行上传并等待结果
-      // todo 后期需要改为store中的用户
       const res=await insertNews({
         ...newsDialog.value.newsAddDto,
-        author: 'admin'  //store.LoginUser.username
+        author: store.LoginUser.username,
+        userId:store.LoginUser.id
       });
       if(res.data.code==2000)
       {
