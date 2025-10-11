@@ -453,6 +453,7 @@ declare namespace API {
 
   type deleteFavoritesByCidParams = {
     id: number;
+    uid: number;
   };
 
   type deleteFavoritesParams = {
@@ -557,6 +558,7 @@ declare namespace API {
 
   type FrontOrderPageDto = {
     pageSize?: number;
+    userId?: number;
     pageNum?: number;
     carName?: string;
     status?: number;
@@ -742,6 +744,7 @@ declare namespace API {
     amount?: number;
     orderTime?: string;
     pickCarTime?: string;
+    realPickTime?: string;
     turnCarTime?: string;
     realTurnTime?: string;
     pickCarLocation?: string;
@@ -774,8 +777,9 @@ declare namespace API {
     remark?: string;
   };
 
-  type queryFavoritesByCidParams = {
-    id: number;
+  type queryFavoritesByUidParams = {
+    uid: number;
+    cid: number;
   };
 
   type RentCarDto = {

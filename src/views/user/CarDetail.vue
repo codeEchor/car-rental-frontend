@@ -124,7 +124,7 @@
                         border-color: #409eff;"
                         @click="rendTheCar"
              >确定</el-button>
-             <el-button >取消</el-button>
+             <el-button @click="handleCancel">取消</el-button>
           </el-form-item>
         </el-form>
     </el-dialog>
@@ -137,7 +137,7 @@ import {ElMessage} from 'element-plus';
 import {Star, StarFilled} from '@element-plus/icons-vue';
 import {useRoute} from "vue-router";
 import {getCarDetail} from "@/api/carDetailController.ts";
-import {addFavorites, deleteFavoritesByCid, queryFavoritesByCid} from "@/api/favoritesController.ts";
+import {addFavorites, deleteFavoritesByCid, queryFavoritesByUid} from "@/api/favoritesController.ts";
 import {rendCar} from "@/api/orderController.ts";
 import useUserStore from "@/stores/userStore.ts";
 import CarDetailVo = API.CarDetailVo;
@@ -145,6 +145,10 @@ import RentCarOrderDto = API.RentCarOrderDto;
 
 const route=useRoute();
 const store=useUserStore();
+const handleCancel=()=>{
+  bookCarDialog.value.rentCarOrderDto={};
+  bookCarDialog.value.visible=false;
+}
 // 租车
 const rendTheCar=async ()=>{
    const res=await rendCar({
@@ -187,7 +191,8 @@ const toggleFavorite = async () => {
       carDetail.value.favoritesNum = (carDetail.value.favoritesNum || 0) - 1;
       // 取消收藏，需要将这条数据进行删除
       const res=await deleteFavoritesByCid({
-        id:route.query.id
+        id:route.query.id,
+        uid:store.LoginUser.id
       })
       if(res.data.code==2000)
       {
@@ -232,8 +237,9 @@ const initCarDetail=async ()=>{
   {
     carDetail.value=res.data.data as CarDetailVo;
     // 从收藏表中查询，判断该汽车是否被收藏
-    const result=await queryFavoritesByCid({
-      id:carDetail.value.id
+    const result=await queryFavoritesByUid({
+      uid:store.LoginUser.id,
+      cid:carDetail.value.id
     })
     if (result.data.code==2000)
     {

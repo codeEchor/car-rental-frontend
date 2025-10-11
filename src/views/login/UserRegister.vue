@@ -125,10 +125,8 @@ const gotoLogin=()=>{
       <el-form-item prop="email" >
         <el-input
             v-model="form.email"
-            type="text"
             placeholder="请输入邮箱"
             prefix-icon="Message"
-            show-password
             clearable
         />
       </el-form-item>

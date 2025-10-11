@@ -67,7 +67,10 @@ const fetchFavoritesList = async () => {
 // 取消收藏
 const cancelFavorite = async (id: number) => {
   try {
-    const response = await deleteFavoritesByCid({ id });
+    const response = await deleteFavoritesByCid({
+       id:id,
+       uid:store.LoginUser.id
+    });
     if (response.data.code === 2000) {
       // 从列表中移除对应的收藏项
       favoritesList.value = favoritesList.value.filter(item => item.carId !== id);

@@ -131,7 +131,7 @@
               clearable
           />
         </el-form-item>
-        <el-form-item label="汽车品牌：" prop="brand">
+        <el-form-item label="汽车品牌：" prop="brandId">
           <el-select  placeholder="请选择汽车品牌" style="width: 240px"
                       v-model="carDialog.carAddDto.brandId"
                       clearable
@@ -140,7 +140,7 @@
           >
           </el-select>
         </el-form-item>
-        <el-form-item label="汽车类型：" prop="category">
+        <el-form-item label="汽车类型：" prop="categoryId">
           <el-select  placeholder="请选择汽车类型" style="width: 240px"
                       v-model="carDialog.carAddDto.categoryId"
                       clearable
@@ -215,7 +215,7 @@
               clearable
           />
         </el-form-item>
-        <el-form-item label="取车城市：" prop="city">
+        <el-form-item label="取车城市：" prop="cityId">
           <el-select  placeholder="请选择取车城市" style="width: 240px"
                       v-model="carDialog.carAddDto.cityId"
                       :options="cityList"
@@ -290,26 +290,29 @@ import MyEditor from "@/components/admin/editor/MyEditor.vue";
 const addOrUpdateFormRef=ref();
 const addOrUpdateRules = reactive({
   carImg: [
-    { required: true, message: '请输入汽车名称', trigger: 'blur' },
+    { required: true, message: '请输入汽车照片', trigger: 'blur' },
   ],
   carName: [
     { required: true, message: '请输入汽车名称', trigger: 'blur' },
     { min: 1, message: '汽车长度不能小于1个字符', trigger: 'blur' }
   ],
-  brand: [
+  brandId: [
     { required: true, message: '请输入汽车品牌', trigger: 'blur' },
   ],
-  category: [
+  categoryId: [
     { required: true, message: '请输入汽车类型', trigger: 'blur' },
   ],
   description: [
     { required: true, message: '请输入汽车描述', trigger: 'blur' },
   ],
-  city: [
+  cityId: [
     { required: true, message: '请输入取车城市', trigger: 'blur' },
   ],
   stock: [
     { required: true, message: '请输入剩余数量', trigger: 'blur' },
+  ],
+  price: [
+    { required: true, message: '请输入租价', trigger: 'blur' },
   ],
 });
 // 车型props
@@ -328,10 +331,11 @@ const CityProps={
    label:'cityName'
 }
 // 记录修改新闻的内容
-let newDetail='';
+const newDetail=ref();
 // 接收子组件修改后的新闻内容
 const receive=(value:string)=>{
-  newDetail=value;
+  newDetail.value=value;
+  console.log(value);
 }
 // 打开汽车详情的弹框
 const openCarDetailDialog=(detail:string)=>{
@@ -428,7 +432,7 @@ const deleteCarsBatch=async ()=>{
 // 打开修改汽车的弹框
 const openCarChangeDialog=(car:CarVo)=>{
   carDialog.value.carAddDto=cloneDeep(car) as CarAddDto;
-  console.log(carDialog.value.carAddDto)
+  newDetail.value=car.detail;
   carDialog.value.id=car.id as number;
   carDialog.value.title='修改汽车';
   carDialog.value.visible=true;
@@ -470,7 +474,7 @@ const handleSave = async () => {
         id:carDialog.value.id
       },{
         ...carDialog.value.carAddDto,
-        detail:newDetail
+        detail:newDetail.value
       });
       if(res.data.code==2000)
       {

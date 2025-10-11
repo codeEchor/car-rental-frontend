@@ -22,7 +22,7 @@
     <el-table :data="tableData"   stripe style="width: 100%"  @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50"/>
       <el-table-column prop="id" label="编号" width="150" align="center"/>
-      <el-table-column prop="userName" label="用户名称" width="150" align="center"/>
+      <el-table-column prop="username" label="用户名称" width="150" align="center"/>
       <el-table-column prop="carName" label="汽车名称" width="150" align="center"/>
       <el-table-column prop="description" label="描述" width="150" align="center"/>
       <el-table-column label="汽车照片" prop="carImg" width="150">
@@ -97,7 +97,7 @@
               clearable
           />
         </el-form-item>
-        <el-form-item label="用户名称" prop="userName" >
+        <el-form-item label="用户名称" prop="username" >
           <el-input
               v-model="favoritesDialog.favoritesAddDto.username"
               placeholder="请输入用户名称"

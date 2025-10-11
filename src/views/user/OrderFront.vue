@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import {onMounted, ref} from 'vue'
 import {
-  ElInput,
-  ElSelect,
   ElButton,
+  ElImage,
+  ElInput,
+  ElMessage,
+  ElMessageBox,
+  ElSelect,
   ElTable,
   ElTableColumn,
-  ElTag,
-  ElImage,
-  ElMessage,
-  ElMessageBox
+  ElTag
 } from 'element-plus'
-import type { Order, OrderPageDto } from '@/api/typings'
-import {getOrderByName, listPageOrders, updateStatus, updateToDeparture, updateToException} from '@/api/orderController'
-import Pagination from '@/components/admin/pagination/Pagination.vue'
+import type {Order} from '@/api/typings'
+import {listPageOrders, updateStatus} from '@/api/orderController'
+import useUserStore from "@/stores/userStore.ts";
 import FrontOrderPageDto = API.FrontOrderPageDto;
 
+const store=useUserStore();
 // 订单数据
 const orderList = ref<Order[]>([]);
 // 表单数据
@@ -27,6 +28,7 @@ const initOrders=async (current:number)=>{
       ...formData.value,
       pageNum:pageData.value.pageNum,
       pageSize:pageData.value.pageSize,
+      userId:store.LoginUser.id
     })
   if(res.data.code==2000)
   {

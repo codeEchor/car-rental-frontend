@@ -2,7 +2,7 @@
 import {ElNotification} from "element-plus";
 import {ref} from "vue";
 import useUserStore from "@/stores/userStore.ts";
-const store=useUserStore();
+
 const reconnectAttempts = ref(0);
 // 最大重连尝试次数
 const maxReconnectAttempts = 5;
@@ -12,6 +12,7 @@ const reconnectDelay = 1000;
 let reconnectTimer: number | null = null;
 export default function ()
 {
+    const store=useUserStore();
     // 连接服务器函数
     const connectWebSocket=()=>{
         if(reconnectTimer)
@@ -21,6 +22,7 @@ export default function ()
         }
         let ws=new WebSocket(`ws://localhost:8080/api/webSocket/${store.LoginUser.id}`);
         ws.addEventListener('message',(event)=>{
+            console.log('收到的消息',event.data);
             receive(event.data);
         })
         ws.addEventListener('open',()=>{

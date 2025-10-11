@@ -19,6 +19,7 @@ const emit=defineEmits<{
     const toolbarConfig = {}
     // 组件销毁时，也及时销毁编辑器
     onBeforeUnmount(() => {
+      console.log('编辑组件被销毁')
       const editor = editorRef.value
       if (editor == null) return
       editor.destroy();

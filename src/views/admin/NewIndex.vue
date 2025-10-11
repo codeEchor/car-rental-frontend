@@ -36,6 +36,7 @@
          </template>
       </el-table-column>
       <el-table-column prop="author" label="新闻作者" width="150" align="center"/>
+      <el-table-column prop="createTime" label="发布时间" width="150" align="center"/>
       <el-table-column  label="操作"   align="center">
         <template #default="scope">
           <el-button type="info" link @click="openNewsChangeDialog(scope.row)">修改</el-button>
@@ -162,12 +163,12 @@ const contentDialog=ref({
    isRead:false
 })
 // 记录修改新闻的内容
-let newContent='';
+const newContent=ref();
 // 接收子组件修改后的新闻内容
 const receive=(value:string)=>{
-  newContent=value;
-  newsDialog.value.newsAddDto.content=newContent;
-
+  newContent.value=value;
+  // 用于在新增新闻时，content有值，通过校验
+  newsDialog.value.newsAddDto.content=newContent.value;
 }
 // 打开查看新闻详情的弹框
 const showContentDialog=(content:string)=>{
@@ -226,6 +227,7 @@ const deleteNewssBatch=async ()=>{
 // 打开修改新闻的弹框
 const openNewsChangeDialog=(news:News)=>{
   newsDialog.value.newsAddDto=cloneDeep(news) as NewsAddDto;
+  newContent.value=news.content;
   newsDialog.value.id=news.id as number;
   newsDialog.value.title='修改新闻';
   newsDialog.value.visible=true;
@@ -271,7 +273,7 @@ const handleSave = async () => {
         id:newsDialog.value.id
       },{
         ...newsDialog.value.newsAddDto,
-        content:newContent
+        content:newContent.value
       });
       if(res.data.code==2000)
       {
